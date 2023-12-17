@@ -46,6 +46,9 @@ class MainWindow:
         text = font.render(f"лучший рекорд: {self.score}", 1, (200, 200, 200))
         screen.blit(text, (20, 20))
 
+    def set_score(self, new_score):
+        pass
+
     def draw_stars(self, screen):
         stars = [(575, 164), (139, 1), (541, 29), (101, 459), (24, 267), (545, 470), (183, 509),
                  (326, 420), (524, 250), (441, 177), (146, 96), (122, 469), (218, 539), (481, 487),
