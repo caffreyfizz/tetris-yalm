@@ -18,20 +18,29 @@ class MainWindow:
         title_sprite.rect.x = (self.width - title_sprite.image.get_rect()[2]) // 2
         title_sprite.rect.y = (self.height - title_sprite.image.get_rect()[3]) // 4
 
+        # спрайт с кнопкой начала игры
         play_button_sprite = pygame.sprite.Sprite()
         play_button_sprite.image = load_image("play_button.png")
-        play_button_sprite.rect = title_sprite.image.get_rect()
+        play_button_sprite.rect = play_button_sprite.image.get_rect()
         self.main_window_sprites.add(play_button_sprite)
         play_button_sprite.rect.x = (self.width - play_button_sprite.image.get_rect()[2]) // 2
-        play_button_sprite.rect.y = ((self.height - play_button_sprite.image.get_rect()[3]) // 4 +
-                                     (self.height - play_button_sprite.image.get_rect()[3]) // 2)
+        play_button_sprite.rect.y = (self.height - play_button_sprite.image.get_rect()[3]) // 2 + 60
 
+        levels_button_sprite = pygame.sprite.Sprite()
+        levels_button_sprite.image = load_image("levels_button.png")
+        levels_button_sprite.rect = levels_button_sprite.image.get_rect()
+        self.main_window_sprites.add(levels_button_sprite)
+        levels_button_sprite.rect.x = (self.width - levels_button_sprite.image.get_rect()[2]) // 2 - 30
+        levels_button_sprite.rect.y = (self.height - play_button_sprite.image.get_rect()[3]) // 2 + 230
+
+
+        # спрайт с кнопкой настроек
         settngs_button_sprite = pygame.sprite.Sprite()
         settngs_button_sprite.image = load_image("settings_button.png")
-        settngs_button_sprite.rect = title_sprite.image.get_rect()
+        settngs_button_sprite.rect = settngs_button_sprite.image.get_rect()
         self.main_window_sprites.add(settngs_button_sprite)
-        settngs_button_sprite.rect.x = self.width - 80
-        settngs_button_sprite.rect.y = 30
+        settngs_button_sprite.rect.x = (self.width - levels_button_sprite.image.get_rect()[2]) // 2 + 130
+        settngs_button_sprite.rect.y = (self.height - play_button_sprite.image.get_rect()[3]) // 2 + 230
 
         self.score = 0
 
@@ -43,11 +52,11 @@ class MainWindow:
         self.main_window_sprites.draw(screen)
 
         font = pygame.font.Font(None, 24)
-        text = font.render(f"лучший рекорд: {self.score}", 1, (200, 200, 200))
+        text = font.render(f"лучший рекорд: {self.score}", 1, (255, 255, 255))
         screen.blit(text, (20, 20))
 
     def set_score(self, new_score):
-        pass
+        self.score = new_score
 
     def draw_stars(self, screen):
         stars = [(575, 164), (139, 1), (541, 29), (101, 459), (24, 267), (545, 470), (183, 509),
@@ -65,13 +74,34 @@ class MainWindow:
                  (559, 355), (125, 325), (262, 392), (87, 74), (492, 560), (217, 306), (435, 521),
                  (247, 315), (373, 184), (244, 195), (204, 478), (321, 409), (417, 408), (283, 184),
                  (538, 535), (104, 585)]
+
         for i in range(100):
             screen.fill(pygame.Color('white'),
                         (stars[i][0],
                          stars[i][1], 2, 2))
 
+    def check_buttons(self, mouse_position):
+        for i, sprite in enumerate(self.main_window_sprites):
+            if self.check_click(sprite.rect,  mouse_position):
+                if i == 1:
+                    self.start_game()
+                if i == 2:
+                    self.open_levels()
+                if i == 3:
+                    self.open_settings()
+
     def check_click(self, object_rect,  mouse_position):
-        if (object_rect[0] <= mouse_position[0] <= object_rect[0] + object_rect[2]
-                and object_rect[1] <= mouse_position[1] <= object_rect[1] + object_rect[3]):
-           return True
+        x, y, width, height = object_rect.x, object_rect.y, object_rect.width, object_rect.height
+        if (x <= mouse_position[0] <= x + width
+                and y <= mouse_position[1] <= y + height):
+            return True
         return False
+
+    def start_game(self):
+        print("start_game")
+
+    def open_settings(self):
+        print("open_settings")
+
+    def open_levels(self):
+        print("open_levels")

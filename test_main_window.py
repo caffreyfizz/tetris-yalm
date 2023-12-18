@@ -17,6 +17,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                window.check_buttons(event.pos)
 
         window.render(screen)
         pygame.display.flip()
