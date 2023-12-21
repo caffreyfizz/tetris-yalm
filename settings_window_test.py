@@ -10,7 +10,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
 
-    window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, screen)
+    window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
     running = True
     while running:
@@ -18,8 +18,6 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             window.events_processing(event)
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                window.check_buttons(event.pos)
 
         window.render(screen)
         pygame.display.flip()

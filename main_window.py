@@ -5,6 +5,7 @@ from image_loading import load_image
 
 class MainWindow:
     def __init__(self, width, height):
+        pygame.mouse.set_visible(False)
         self.background_color = (0, 33, 56)
         self.width, self.height = width, height
 
@@ -43,6 +44,10 @@ class MainWindow:
         settngs_button_sprite.rect.y = (self.height - play_button_sprite.image.get_rect()[3]) // 2 + 230
 
         self.score = 0
+        # self.set_score()
+
+        self.cursor_pos = 0, 0
+        self.cursor = load_image("cursor.png")
 
     def render(self, screen):
         screen.fill(self.background_color)
@@ -55,8 +60,14 @@ class MainWindow:
         text = font.render(f"лучший рекорд: {self.score}", 1, (255, 255, 255))
         screen.blit(text, (20, 20))
 
-    def set_score(self, new_score):
-        self.score = new_score
+        if pygame.mouse.get_focused():
+            screen.blit(self.cursor, self.cursor_pos)
+
+    def set_score(self):
+        with open("") as file:
+            results = [int(res) for res in file.read().split()]
+
+        self.score = max(results)
 
     def draw_stars(self, screen):
         stars = [(575, 164), (139, 1), (541, 29), (101, 459), (24, 267), (545, 470), (183, 509),
@@ -96,6 +107,14 @@ class MainWindow:
                 and y <= mouse_position[1] <= y + height):
             return True
         return False
+
+    def events_processing(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.check_buttons(event.pos)
+        if event.type == pygame.MOUSEMOTION:
+            if pygame.mouse.get_focused():
+                self.cursor_pos = event.pos
 
     def start_game(self):
         print("start_game")

@@ -4,7 +4,7 @@ from image_loading import load_image
 
 
 class Slider:
-    def __init__(self, screen, window_width, window_height):
+    def __init__(self, window_width, window_height):
         self.start_x, self.start_y = (window_width - 300) // 2, 200
         self.window_width, self.window_height = window_width, window_height
 
@@ -13,8 +13,6 @@ class Slider:
         self.width = 10
         self.height = 100
         self.mode = 2
-
-        self.render(screen)
 
     def check(self, mouse_x):
         if self.x <= mouse_x <= self.x + self.width:
@@ -60,13 +58,13 @@ class Slider:
 
 
 class SettingsWindow:
-    def __init__(self, width, height, screen):
+    def __init__(self, width, height):
         pygame.mouse.set_visible(False)
         self.background_color = (0, 17, 28)
         self.width, self.height = width, height
 
         self.settings_window_sprites = pygame.sprite.Group()
-        self.slider = Slider(screen, width, height)
+        self.slider = Slider(width, height)
         self.cursor_pos = 0, 0
         self.cursor = load_image("cursor.png")
         self.sliding = False
@@ -80,6 +78,8 @@ class SettingsWindow:
 
     def events_processing(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.check_buttons(event.pos)
             self.slider.set_steps_values(event.pos[0])
             if self.slider.check(event.pos[0]):
                 self.sliding = True
@@ -91,6 +91,7 @@ class SettingsWindow:
                 self.slider.move(event.pos[0])
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
+
     def render(self, screen):
         screen.fill(self.background_color)
         self.draw_stars(screen)
@@ -104,7 +105,8 @@ class SettingsWindow:
         text = font.render(f"выберите уровень сложности", 1, (255, 255, 255))
         screen.blit(text, (180, 80))
 
-        screen.blit(self.cursor, self.cursor_pos)
+        if pygame.mouse.get_focused():
+            screen.blit(self.cursor, self.cursor_pos)
 
     def draw_stars(self, screen):
         stars = [(575, 164), (139, 1), (541, 29), (101, 459), (24, 267), (545, 470), (183, 509),
