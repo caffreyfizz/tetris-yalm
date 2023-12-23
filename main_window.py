@@ -46,7 +46,7 @@ class MainWindow:
         self.score = 0
         # self.set_score()
 
-        self.cursor_pos = 0, 0
+        self.cursor_pos = pygame.mouse.get_pos()
         self.cursor = load_image("cursor.png")
 
     def render(self, screen):
@@ -94,12 +94,12 @@ class MainWindow:
     def check_buttons(self, mouse_position):
         for i, sprite in enumerate(self.main_window_sprites):
             if self.check_click(sprite.rect,  mouse_position):
-                if i == 1:
-                    self.start_game()
-                if i == 2:
-                    self.open_levels()
-                if i == 3:
-                    self.open_settings()
+                if i == 1: # главное меню
+                    return self.open_game_window()
+                if i == 2: # уровни
+                    return self.open_levels()
+                if i == 3: # настройки
+                    return self.open_settings_window()
 
     def check_click(self, object_rect,  mouse_position):
         x, y, width, height = object_rect.x, object_rect.y, object_rect.width, object_rect.height
@@ -109,18 +109,25 @@ class MainWindow:
         return False
 
     def events_processing(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                self.check_buttons(event.pos)
+        new_window = None
+
         if event.type == pygame.MOUSEMOTION:
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                new_window = self.check_buttons(event.pos)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                new_window = self.open_game_window()
 
-    def start_game(self):
-        print("start_game")
+        return new_window
 
-    def open_settings(self):
-        print("open_settings")
+    def open_game_window(self):
+        return [2, None]
+
+    def open_settings_window(self):
+        return [3, None]
 
     def open_levels(self):
-        print("open_levels")
+        return [4, None]

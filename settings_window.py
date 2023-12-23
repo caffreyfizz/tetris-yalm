@@ -4,15 +4,20 @@ from image_loading import load_image
 
 
 class Slider:
-    def __init__(self, window_width, window_height):
+    def __init__(self, window_width, window_height, mode):
         self.start_x, self.start_y = (window_width - 300) // 2, 200
         self.window_width, self.window_height = window_width, window_height
 
         self.step_x, self.step_y = None, None
-        self.x, self.y = self.start_x + 145, self.start_y - 50
         self.width = 10
         self.height = 100
-        self.mode = 2
+        self.mode = mode
+        if mode == 1:
+            self.x, self.y = self.start_x, self.start_y - 50
+        if mode == 2:
+            self.x, self.y = self.start_x + 145, self.start_y - 50
+        if mode == 3:
+            self.x, self.y = self.start_x + 290, self.start_y - 50
 
     def check(self, mouse_x):
         if self.x <= mouse_x <= self.x + self.width:
@@ -58,14 +63,14 @@ class Slider:
 
 
 class SettingsWindow:
-    def __init__(self, width, height):
+    def __init__(self, width, height, mode):
         pygame.mouse.set_visible(False)
         self.background_color = (0, 17, 28)
         self.width, self.height = width, height
 
         self.settings_window_sprites = pygame.sprite.Group()
-        self.slider = Slider(width, height)
-        self.cursor_pos = 0, 0
+        self.slider = Slider(width, height, mode)
+        self.cursor_pos = pygame.mouse.get_pos()
         self.cursor = load_image("cursor.png")
         self.sliding = False
 
@@ -77,20 +82,26 @@ class SettingsWindow:
         return_button_sprite.rect.y = 10
 
     def events_processing(self, event):
+        new_window = None
+        new_mode = None
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                self.check_buttons(event.pos)
+                new_window = self.check_buttons(event.pos)
             self.slider.set_steps_values(event.pos[0])
             if self.slider.check(event.pos[0]):
                 self.sliding = True
         if event.type == pygame.MOUSEBUTTONUP:
             self.slider.del_steps()
             self.sliding = False
+            new_mode = self.slider.get_mode()
         if event.type == pygame.MOUSEMOTION:
             if self.sliding:
                 self.slider.move(event.pos[0])
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
+
+        return [new_window, new_mode]
 
     def render(self, screen):
         screen.fill(self.background_color)
@@ -134,7 +145,7 @@ class SettingsWindow:
         for i, sprite in enumerate(self.settings_window_sprites):
             if self.check_click(sprite.rect, mouse_position):
                 if i == 0:
-                    self.open_main()
+                    return 1
 
     def check_click(self, object_rect, mouse_position):
         x, y, width, height = object_rect.x, object_rect.y, object_rect.width, object_rect.height
@@ -142,9 +153,3 @@ class SettingsWindow:
                 and y <= mouse_position[1] <= y + height):
             return True
         return False
-
-    def open_main(self):
-        print("open_main")
-
-    def get_mode(self):
-        return self.slider.get_mode()
