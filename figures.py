@@ -8,23 +8,24 @@ class Figure(pygame.sprite.Sprite):
         
         self.figures_sprites = pygame.sprite.Group()
 
-    def render(self, horizontal_borders, vertical_borders):
-        self.figures_sprites.draw(self.screen)
+    def render(self, screen):
+        self.figures_sprites.draw(screen)
+
+    def check_collide(self, horizontal_borders, vertical_borders):
         if pygame.sprite.spritecollideany(self, horizontal_borders):
-            pass
+            return True
         if pygame.sprite.spritecollideany(self, vertical_borders):
-            pass
+            print("wall")
+
 
 class Cube(Figure):
-
-    def __init__(self, x, y, screen):
-        super().__init__()
+    def __init__(self, color, x, y, *group):
+        super().__init__(*group)
         self.image = load_image("cube.png")
         
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
-        self.screen = screen
+        self.color = color
 
         self.figures_sprites.add(self)
