@@ -11,7 +11,6 @@ WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 600, 600
 def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
-
     mode = 1
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
