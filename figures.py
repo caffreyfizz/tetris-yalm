@@ -11,11 +11,10 @@ class Figure(pygame.sprite.Sprite):
     def render(self, screen):
         self.figures_sprites.draw(screen)
 
-    def check_collide(self, horizontal_borders, vertical_borders):
-        if pygame.sprite.spritecollideany(self, horizontal_borders):
-            return True
-        if pygame.sprite.spritecollideany(self, vertical_borders):
-            print("wall")
+    def check_collide(self, *groups):
+        for group in groups:
+            if pygame.sprite.spritecollideany(self, group):
+                return True
 
 
 class Cube(Figure):

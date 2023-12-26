@@ -13,6 +13,7 @@ vertical_borders = pygame.sprite.Group()
 
 class GameWindow:
     def __init__(self, width, height, mode, screen):
+        pygame.mouse.set_visible(False)
         self.background_color = (0, 0, 0)
         self.width, self.height = width, height
 
@@ -38,27 +39,36 @@ class GameWindow:
         self.space = pymunk.Space()
         self.space.gravity = 0, 1000
 
-        # платформа
-        segment_shape = pymunk.Segment(self.space.static_body, (1, self.height),
-                                       (self.width // 2 + 50, self.height), 40)
-        self.space.add(segment_shape)
-        segment_shape.elasticity = 0.8
-        segment_shape.friction = 1.0
+        floor = pymunk.Segment(self.space.static_body, (1, self.height + 40),
+                                       (self.width // 2 + 50, self.height + 40), 40)
+        self.space.add(floor)
+        floor.elasticity = 0.8
+        floor.friction = 1.0
 
-        segment_shape1 = pymunk.Segment(self.space.static_body, (1, 1), (1, self.height), 10)
-        self.space.add(segment_shape1)
-        segment_shape1.elasticity = 0.8
-        segment_shape1.friction = 1.0
+        left_wall = pymunk.Segment(self.space.static_body, (10, 0), (10, self.height), 10)
+        self.space.add(left_wall)
+        left_wall.elasticity = 0.8
+        left_wall.friction = 1.0
 
-        segment_shape2 = pymunk.Segment(self.space.static_body, (self.width // 2 + 50, 1),
-                                        (self.width // 2 + 50, self.height), 10)
-        self.space.add(segment_shape2)
-        segment_shape2.elasticity = 0.8
-        segment_shape2.friction = 1.0
+        right_wall = pymunk.Segment(self.space.static_body, (self.width // 2 + 45, 1),
+                                        (self.width // 2 + 45, self.height), 10)
+        self.space.add(right_wall)
+        right_wall.elasticity = 0.8
+        right_wall.friction = 1.0
 
         self.color = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100
 
     def render(self, screen):
+        if pygame.key.get_pressed()[pygame.K_LEFT]:
+            if self.x_figure > 20:
+                self.x_figure -= 10
+        if pygame.key.get_pressed()[pygame.K_RIGHT]:
+            if self.x_figure < 240:
+                self.x_figure += 10
+        if pygame.key.get_pressed()[pygame.K_DOWN]:
+            self.y_figure += 10
+
+
         screen.fill(self.background_color)
         background = load_image("interface.png")
         
@@ -75,7 +85,8 @@ class GameWindow:
         screen.blit(text_rows, (370, 445))
 
         cube = Cube(self.color, self.x_figure, self.y_figure)
-        if not cube.check_collide(self.horizontal_borders, self.vertical_borders):
+
+        if not cube.check_collide(self.horizontal_borders):
             cube.render(screen)
 
             self.y_figure += 2
@@ -97,12 +108,8 @@ class GameWindow:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:   # вернуться в меню
                 new_window = self.open_main()
-            if event.key == pygame.K_RIGHT:
-                self.x_figure += 10
-            if event.key == pygame.K_LEFT:
-                self.x_figure -= 10
             if event.key == pygame.K_UP:
-                    pass
+                pass
 
         return new_window
 
