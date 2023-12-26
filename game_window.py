@@ -56,7 +56,15 @@ class GameWindow:
         right_wall.elasticity = 0.8
         right_wall.friction = 1.0
 
-        self.color = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100
+        if mode == 1:
+            self.colors = [(22, 128, 212, 100), (0, 125, 104, 100), (253, 187, 3, 100)]
+        elif mode == 2:
+            self.colors = [(22, 128, 212, 100), (0, 125, 104, 100), (253, 187, 3, 100), (198, 23, 88, 100)]
+        elif mode == 3:
+            self.colors = [(22, 128, 212, 100), (0, 125, 104, 100), (253, 187, 3, 100),
+                           (198, 23, 88, 100), (244, 98, 42, 100)]
+
+        self.color = random.choice(self.colors)
 
     def render(self, screen):
         if pygame.key.get_pressed()[pygame.K_LEFT]:
@@ -87,7 +95,7 @@ class GameWindow:
         cube = Cube(self.color, self.x_figure, self.y_figure)
 
         if not cube.check_collide(self.horizontal_borders):
-            cube.render(screen)
+            cube.render(screen, self.color)
 
             self.y_figure += 2
 
@@ -97,7 +105,7 @@ class GameWindow:
 
             self.y_figure = -100
             self.x_figure = 100
-            self.color = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100
+            self.color = self.color = random.choice(self.colors)
 
         self.space.step(1 / 60)
         self.space.debug_draw(self.draw_options)

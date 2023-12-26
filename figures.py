@@ -28,3 +28,6 @@ class Cube(Figure):
         self.color = color
 
         self.figures_sprites.add(self)
+
+    def render(self, screen, color):
+        pygame.draw.rect(screen, color, (self.rect.x, self.rect.y, self.rect.width, self.rect.width))
