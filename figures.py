@@ -31,3 +31,36 @@ class Cube(Figure):
 
     def render(self, screen, color):
         pygame.draw.rect(screen, color, (self.rect.x, self.rect.y, self.rect.width, self.rect.width))
+
+
+class Gshaped(Figure):
+    def __init__(self, color, x, y, image="G.png", *group):
+        super().__init__(*group)
+        self.picture = image
+        self.image = load_image(image)
+        
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.color = color
+
+        self.figures_sprites.add(self)
+
+    def render(self, screen, color):
+        self.figures_sprites.draw(screen)
+
+
+class Tshaped(Figure):
+    def __init__(self, color, x, y, image="T.png", *group):
+        super().__init__(*group)
+        self.image = load_image(image)
+        
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.color = color
+
+        self.figures_sprites.add(self)
+
+    def render(self, screen, color):
+        self.figures_sprites.draw(screen)

@@ -4,7 +4,9 @@ import pygame
 import pymunk.pygame_util
 import time
 from image_loading import load_image
-from figures import Cube
+from figures import Cube, Gshaped, Tshaped
+from PIL import Image
+import os
 
 
 horizontal_borders = pygame.sprite.Group()
@@ -19,7 +21,7 @@ class GameWindow:
 
         self.mode = mode
         
-        self.x_figure, self.y_figure = 100, -100   # будет спавнится в рандомных координатах
+        self.x_figure, self.y_figure = 100, -100
 
         self.score = 0
         self.rows = 0
@@ -92,10 +94,10 @@ class GameWindow:
         text_rows = font.render(f"{self.rows}", 1, (0, 0, 0))
         screen.blit(text_rows, (370, 445))
 
-        cube = Cube(self.color, self.x_figure, self.y_figure)
+        self.figure = Gshaped(self.color, self.x_figure, self.y_figure)
 
-        if not cube.check_collide(self.horizontal_borders):
-            cube.render(screen, self.color)
+        if not self.figure.check_collide(self.horizontal_borders):
+            self.figure.render(screen, self.color)
 
             self.y_figure += 2
 
@@ -118,6 +120,7 @@ class GameWindow:
                 new_window = self.open_main()
             if event.key == pygame.K_UP:
                 pass
+                
 
         return new_window
 
