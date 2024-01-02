@@ -26,7 +26,7 @@ def main():
                 if result[0] == 1:
                     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif result[0] == 2:
-                    window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
+                    window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode, screen)
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
                 elif result[0] == 4:
