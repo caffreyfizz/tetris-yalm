@@ -33,8 +33,8 @@ class GameWindow:
         self.left_border = pygame.sprite.Group()
         self.right_border = pygame.sprite.Group()
         Border(20, self.height - 1, self.width // 2 + 50, self.height, self.bottom_border)
-        Border(20, 0, 20, self.height - 1, self.left_border)
-        Border(self.width // 2 + 35, 0, self.width // 2 + 35, self.height, self.right_border)
+        Border(20, -100, 20, self.height - 1, self.left_border)
+        Border(self.width // 2 + 35, -100, self.width // 2 + 35, self.height, self.right_border)
 
         self.sand = []
 
@@ -99,7 +99,6 @@ class GameWindow:
             self.figure.move(self.speed, self.left_border, self.right_border)
 
         else:
-            print()
             new_sand = Sand(self.figure.get_color(), self.figure.get_rect().x, self.figure.get_rect().y, self.space)
             self.sand.append(new_sand)
 
@@ -110,8 +109,7 @@ class GameWindow:
             self.figure.start()
             self.next_figure = random.choice(self.figures_types)(random.choice(self.colors))
 
-            self.speed += 0.2    # с каждой фигурой скорость увеличивается
-            print()
+            self.speed += 0    # с каждой фигурой скорость увеличивается
 
         self.space.step(1 / 60)
         self.space.debug_draw(self.draw_options)
@@ -123,7 +121,7 @@ class GameWindow:
             if event.key == pygame.K_BACKSPACE:   # вернуться в меню
                 new_window = self.open_main()
             if event.key == pygame.K_UP:
-                pass
+                self.figure.rotate()
 
         return new_window
 
