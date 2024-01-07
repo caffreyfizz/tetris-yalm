@@ -84,9 +84,9 @@ class GameWindow:
         font = pygame.font.Font(None, 35)
         
         text_score = font.render(f"{self.score}", 1, (0, 0, 0))
-        screen.blit(text_score, (385, 300))   # в каких то координатах
+        screen.blit(text_score, (385, 300))
 
-        text_time = font.render(f"{time.time() - self.start_time:.2f}", 1, (0, 0, 0))   # время игры
+        text_time = font.render(f"{time.time() - self.start_time:.2f}", 1, (0, 0, 0))
         screen.blit(text_time, (370, 410))
 
         text_rows = font.render(f"{self.rows}", 1, (0, 0, 0))

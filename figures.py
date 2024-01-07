@@ -61,7 +61,7 @@ class Figure(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, 90)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.x, self.y
-
+        
     def get_color(self):
         return self.color
 
@@ -69,6 +69,12 @@ class Figure(pygame.sprite.Sprite):
 class Ishaped(Figure):
     def __init__(self, color, next=True, *group):
         super().__init__(color, f"I_shape/I_{color}.png", *group, next)
+
+    def rotate(self):
+        self.image = pygame.transform.rotate(self.image, 90)
+        self.rect = self.image.get_rect()
+        self.x += 60
+        self.rect.x, self.rect.y = self.x, self.y
 
 
 class Jshaped(Figure):
