@@ -63,7 +63,6 @@ def create_circles(pos):
             step_x = step_x // 4
             body = world.CreateDynamicBody(position=(x + step_x, y + step_y))
             circle = body.CreateCircleFixture(radius=1, density=1, friction=1)
-            print(type(circle))
         print()
 
 
@@ -75,7 +74,7 @@ def create_rectangles(pos):
 
 
 colors = {staticBody: (255, 255, 255, 255),
-          dynamicBody: (127, 127, 127, 127)
+          dynamicBody: (0, 35, 245, 127)
 }
 
 
