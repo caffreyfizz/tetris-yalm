@@ -12,6 +12,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     mode = 1
+    level = "test"
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
@@ -26,7 +27,7 @@ def main():
                 if result[0] == 1:
                     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif result[0] == 2:
-                    window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode, screen)
+                    window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode, screen, level)
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
                 elif result[0] == 4:
