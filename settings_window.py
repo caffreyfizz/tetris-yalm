@@ -1,6 +1,6 @@
 import pygame
 
-from image_loading import load_image
+from assets import load_image
 
 
 class Slider:

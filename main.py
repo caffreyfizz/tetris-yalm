@@ -5,7 +5,7 @@ from main_window import MainWindow
 from game_window import GameWindow
 
 
-WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 600, 600
+from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 def main():
