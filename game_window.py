@@ -5,6 +5,7 @@ import time
 from image_loading import load_image
 from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshaped
 from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody
+from buttons import ButtonClue, ButtonReady, ButtonTurn, Button
 
 
 RGB_COLORS = {"blue": (22, 128, 212, 100), "green": (0, 125, 104, 100), "yellow": (253, 187, 3, 100),
@@ -27,7 +28,7 @@ class GameWindow:
                               "Oshaped": Oshaped, "Sshaped": Sshaped, "Tshaped": Tshaped,
                               "Zshaped": Zshaped}
 
-        self.mode = mode
+        self.level = mode
 
         self.score = 0
         self.rows = 0
@@ -35,27 +36,24 @@ class GameWindow:
 
         self.fallen_figures = pygame.sprite.Group()
 
-        if mode == 1:
-            self.gravity = -10
-        elif mode == 2:
-            self.speed = -20
-        elif mode == 3:
-            self.speed = -30
+        if level == 1:
+            pass
+        elif level == 2:
+            self.figures = ["Ishaped", "Oshaped", "Jshaped", "Lshaped"]
+        elif level == 3:
+            pass
 
         self.box2d_init()
         self.load_lvl(level)
 
-        self.number_of_figure = 0
-
-        current_figure = self.figures[self.number_of_figure]
-        self.figure = (self.figures_types[current_figure[0]]
-                       (current_figure[1], self.space, self.fallen_figures, next=False))
-        self.number_of_figure += 1
-
-        current_figure = self.figures[self.number_of_figure]
-        self.next_figure = (self.figures_types[current_figure[0]]
-                            (current_figure[1], self.space, self.fallen_figures, next=True))
-        self.number_of_figure += 1
+        self.colors = ["blue", "green", "pink", "purple", "yellow"]
+        self.coords_for_buttons = [(380, 275), (465, 275), (535, 275), (380, 385), (465, 380), (535, 380)]
+        self.figures_button = pygame.sprite.Group()
+        
+        for i in range(len(self.figures)):
+            figure = self.figures_types[self.figures[i]](random.choice(self.colors))
+            figure.x, figure.y = self.coords_for_buttons[i]
+            figure.figures_sprites.draw(screen)
 
     def box2d_init(self):
         self.space = world(gravity=(0, -1000))
@@ -86,14 +84,16 @@ class GameWindow:
 
         font = pygame.font.Font(None, 35)
 
-        text_score = font.render(f"{self.score}", 1, (0, 0, 0))
-        screen.blit(text_score, (385, 300))
+        text_score = font.render(f"{self.score}", 1, (255, 255, 255))
+        screen.blit(text_score, (503, 45))
 
-        text_time = font.render(f"{time.time() - self.start_time:.2f}", 1, (0, 0, 0))
-        screen.blit(text_time, (370, 410))
+        text_time = font.render(f"{time.time() - self.start_time:.2f}", 1, (255, 255, 255))
+        screen.blit(text_time, (480, 80))
 
-        text_rows = font.render(f"{self.rows}", 1, (0, 0, 0))
-        screen.blit(text_rows, (370, 445))
+        self.button = Button()
+        self.rot_button = ButtonTurn()
+        self.ready_button = ButtonReady()
+        self.clue_button = ButtonClue()
 
         self.fallen_figures.update()
         self.fallen_figures.draw(screen)
@@ -115,6 +115,14 @@ class GameWindow:
                 self.figure.rotate()
             if event.key == pygame.K_ESCAPE:
                 self.pause()
+            if event.key == pygame.MOUSEBUTTONDOWN:
+                result = self.button.is_clicked()
+                if result == "rotate":
+                    self.rot_button.rotate(self.figure)
+                elif result == "ready":
+                    pass
+                elif result == "clue":
+                    pass
 
         return new_window
 
