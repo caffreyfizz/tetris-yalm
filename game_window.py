@@ -7,7 +7,7 @@ from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshape
 from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody
 from buttons import ButtonClue, ButtonReady, ButtonTurn, Button
 
-from assets import load_image, RGB_COLORS, PPI
+from assets import load_image, RGB_COLORS, PPM, TIME_STEP
 
 
 horizontal_borders = pygame.sprite.Group()
@@ -31,7 +31,7 @@ class GameWindow:
         self.rows = 0
         self.start_time = time.time()
 
-        self.fallen_figures = pygame.sprite.Group()
+        self.static_figures = pygame.sprite.Group()
 
         self.box2d_init()
         self.load_lvl(level)
@@ -39,13 +39,19 @@ class GameWindow:
         self.colors = ["blue", "green", "pink", "purple", "yellow"]
         self.coords_for_buttons = [(380, 275), (465, 275), (535, 275), (380, 385), (465, 380), (535, 380)]
         self.figures_button = pygame.sprite.Group()
-        
-        for i in range(len(self.figures)):
-            figure = self.figures_types[self.figures[i][0]](self.figures[i][1])
+
+        # надо пофиксить
+        for i in range(len(self.list_of_figures)):
+            figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1])
             figure.x, figure.y = self.coords_for_buttons[i]
             figure.figures_sprites.draw(screen)
 
         self.load_buttons()
+
+        # test
+        # fallen_figure = self.figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
+        #                                                                self.space, 100, 10, 75, 3)
+        # self.fallen_figures = [fallen_figure]
 
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
@@ -54,7 +60,7 @@ class GameWindow:
         ButtonClue(self.buttons)
 
     def box2d_init(self):
-        self.space = world(gravity=(0, -1000))
+        self.space = world(gravity=(0, -10))
 
         self.ground_body = self.space.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(30, 1)))
         self.left_body = self.space.CreateStaticBody(position=(30, 60), shapes=polygonShape(box=(1, 60)))
@@ -71,8 +77,8 @@ class GameWindow:
         with open(f"data/levels/{lvl}.txt") as file:
             data = [string for string in file.read().split("\n")][:-1]
 
-        self.height = int(data[0]) * self.figure_piece_size
-        self.figures = [(string.split(";")[0], string.split(";")[1]) for string in data[1:]]
+        self.height, self.figure_piece_size = int(data[0].split(";")[0]), int(data[0].split(";")[1])
+        self.list_of_figures = [(string.split(";")[0], string.split(";")[1]) for string in data[2:]]
 
     def render(self, screen):
         screen.fill((0, 0, 0))
@@ -82,10 +88,15 @@ class GameWindow:
 
         self.text_render(screen)
 
-        self.fallen_figures.update()
-        self.fallen_figures.draw(screen)
+        self.static_figures.update()
+        self.static_figures.draw(screen)
 
         self.buttons.draw(screen)
+
+        for figure in self.fallen_figures:
+            figure.render(screen)
+
+        self.space.Step(TIME_STEP, 10, 10)
 
     def buttons_check(self, mouse_position):
         for button in self.buttons:

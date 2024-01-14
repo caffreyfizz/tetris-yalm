@@ -1,99 +1,105 @@
 import pygame
-from assets import load_image
+
+from assets import load_image, PPM, WINDOW_WIDTH, WINDOW_HEIGHT, RGB_COLORS
+from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody, weldJoint
 
 
-class Figure(pygame.sprite.Sprite):
-    def __init__(self, color, img_name, *group):
-        super().__init__(*group)
+def my_draw_polygon(polygon, body, fixture, color, screen):
+    vertices = [(body.transform * v) * PPM for v in polygon.vertices]
+    vertices = [(v[0], WINDOW_HEIGHT - v[1]) for v in vertices]
+    pygame.draw.polygon(screen, color, vertices)
+    return vertices
 
-        self.image = load_image(img_name)
 
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x = (335 - self.image.get_rect().width) // 2
-        self.rect.y = self.y = -100
+polygonShape.draw = my_draw_polygon
 
-        self.color = color
 
-        self.figures_sprites = pygame.sprite.Group()
-        self.figures_sprites.add(self)
+class FallingFigure:
+    def __init__(self, color, space,  x, y, width):
+        self.color = RGB_COLORS[color]
+        self.space = space
+        self.width = width
+        self.x, self.y = x, y
+
+        self.box2d_init()
+
+    def box2d_init(self):
+        pass
 
     def render(self, screen):
-        self.figures_sprites.draw(screen)
-
-    def move(self, speed, left_border, right_border):
-        if pygame.key.get_pressed()[pygame.K_LEFT]:
-            self.x -= 10
-        if pygame.key.get_pressed()[pygame.K_RIGHT]:
-            self.x += 10
-        if pygame.key.get_pressed()[pygame.K_DOWN]:
-            self.y += 10
-
-        self.rect.x = self.x
-
-        if self.check_collide(left_border):
-            self.x = 20
-        if self.check_collide(right_border):
-            self.x = 335 - self.rect.width
-
-        if not self.next:
-            self.y += speed
-
-        self.rect.x, self.rect.y = self.x, self.y
-
-    def start(self):
-        self.next = False
-        self.rect.x = self.x = (335 - self.image.get_rect().width) // 2
-        self.rect.y = self.y = -100
-
-    def check_collide(self, border):
-        if pygame.sprite.spritecollideany(self, border):
-            return True
-
-    def get_rect(self):
-        return self.rect
-
-    def rotate(self):
-        self.image = pygame.transform.rotate(self.image, 90)
-        self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = self.x, self.y
+        for body, box in self.bodies:
+            box.shape.draw(body, box, self.color, screen)
 
     def get_color(self):
         return self.color
-    
-    def is_clicked(self):
-        pass
 
 
-class Ishaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"I_shape/I_{color}.png", *group)
+class FallingIshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
+
+    def box2d_init(self):
+        self.bodies = []
+
+        x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM + self.width / PPM / 2
+        body1 = self.space.CreateDynamicBody(position=(x1, y1), angle=0)
+        box1 = body1.CreatePolygonFixture(box=(self.width / PPM / 2, self.width / PPM / 2), density=1, friction=1)
+        self.bodies.append((body1, box1))
+
+        x2, y2 = x1 * 3, y1 + self.width / PPM / 2
+        body2 = self.space.CreateDynamicBody(position=(x1, y1), angle=0)
+        box2 = body2.CreatePolygonFixture(box=(self.width / PPM / 2 * 3, self.width / PPM / 2), density=1, friction=1)
+        self.bodies.append((body2, box2))
 
 
-class Jshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"J_shape/J_{color}.png", *group)
+class FallingJshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width)
+
+    def box2d_init(self):
+        self.bodies = []
+
+        x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM + self.width / PPM / 2
+        body1 = self.space.CreateDynamicBody(position=(x1, y1), angle=0)
+        box1 = body1.CreatePolygonFixture(box=(self.width / PPM / 2, self.width / PPM / 2), density=1, friction=1)
+        self.bodies.append((body1, box1))
+
+        x2, y2 = self.x / PPM + self.width / PPM * 1.5, y1 - self.width / PPM
+        body2 = self.space.CreateDynamicBody(position=(x2, y2), angle=0)
+        box2 = body2.CreatePolygonFixture(box=(self.width / PPM / 2 * 3, self.width / PPM / 2), density=1, friction=1)
+        self.bodies.append((body2, box2))
+        # joint = self.space.CreateWeldJoint(bodyA=body1, bodyB=body2, localAnchorA=(0, -self.width / PPM / 2),
+                                           # localAnchorB=(-self.width / PPM, self.width / PPM / 2))
 
 
-class Lshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"L_shape/L_{color}.png", *group)
+class FallingLshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
 
 
-class Oshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"O_shape/O_{color}.png", *group)
+class FallingOshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
+
+    def box2d_init(self):
+        self.bodies = []
+
+        x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM + self.width / PPM / 2
+        body1 = self.space.CreateDynamicBody(position=(x1, y1), angle=0)
+        box1 = body1.CreatePolygonFixture(box=(self.width / PPM / 2, self.width / PPM / 2), density=1, friction=1)
+        self.bodies.append((body1, box1))
 
 
-class Sshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"S_shape/S_{color}.png", *group)
+class FallingSshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
 
 
-class Tshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"T_shape/T_{color}.png", *group)
+class FallingTshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
 
 
-class Zshaped(Figure):
-    def __init__(self, color, *group):
-        super().__init__(color, f"Z_shape/Z_{color}.png", *group)
+class FallingZshaped(FallingFigure):
+    def __init__(self, color, space, x, y, cell_width, count_rotates):
+        super().__init__(color, space, x, y, cell_width * 2)
