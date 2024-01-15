@@ -12,10 +12,11 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     mode = 1
-    level = "test2"
+    level = "test3"
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
+    clock = pygame.time.Clock()
     running = True
     while running:
         for event in pygame.event.get():
@@ -37,6 +38,7 @@ def main():
                     mode = result[1]
 
         window.render(screen)
+        clock.tick(FPS)
         pygame.display.flip()
     pygame.quit()
 
