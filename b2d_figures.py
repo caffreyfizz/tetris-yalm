@@ -69,7 +69,7 @@ class FallingJshaped(FallingFigure):
         box2 = body2.CreatePolygonFixture(box=(self.width / PPM / 2 * 3, self.width / PPM / 2), density=1, friction=1)
         self.bodies.append((body2, box2))
         # joint = self.space.CreateWeldJoint(bodyA=body1, bodyB=body2, localAnchorA=(0, -self.width / PPM / 2),
-                                           # localAnchorB=(-self.width / PPM, self.width / PPM / 2))
+        #                                    localAnchorB=(-self.width / PPM, self.width / PPM / 2))
 
 
 class FallingLshaped(FallingFigure):

@@ -5,7 +5,7 @@ from main_window import MainWindow
 from game_window import GameWindow
 
 
-from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT
+from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS
 
 
 def main():

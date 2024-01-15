@@ -1,10 +1,10 @@
-import random
-
 import pygame
 import time
-
-from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshaped
 from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody
+
+# from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshaped
+from b2d_figures import (FallingIshaped, FallingJshaped, FallingLshaped, FallingOshaped, FallingSshaped,
+                         FallingTshaped, FallingZshaped)
 from buttons import ButtonClue, ButtonReady, ButtonTurn, Button
 
 from assets import load_image, RGB_COLORS, PPM, TIME_STEP
@@ -21,9 +21,14 @@ class GameWindow:
 
         self.figure_piece_size = 30
 
-        self.figures_types = {"Ishaped": Ishaped, "Jshaped": Jshaped, "Lshaped": Lshaped,
+        # тут надо будет раскомментить когда добавишь файл с фигурами
+        """self.figures_types = {"Ishaped": Ishaped, "Jshaped": Jshaped, "Lshaped": Lshaped,
                               "Oshaped": Oshaped, "Sshaped": Sshaped, "Tshaped": Tshaped,
-                              "Zshaped": Zshaped}
+                              "Zshaped": Zshaped}"""
+
+        self.falling_figures_types = {"Ishaped": FallingIshaped, "Jshaped": FallingJshaped, "Lshaped": FallingLshaped,
+                                      "Oshaped": FallingOshaped, "Sshaped": FallingSshaped, "Tshaped": FallingTshaped,
+                                      "Zshaped": FallingZshaped}
 
         self.level = mode
 
@@ -40,18 +45,18 @@ class GameWindow:
         self.coords_for_buttons = [(380, 275), (465, 275), (535, 275), (380, 385), (465, 380), (535, 380)]
         self.figures_button = pygame.sprite.Group()
 
-        # надо пофиксить
-        for i in range(len(self.list_of_figures)):
+        # надо тоже раскомментить потом
+        """for i in range(len(self.list_of_figures)):
             figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1])
             figure.x, figure.y = self.coords_for_buttons[i]
-            figure.figures_sprites.draw(screen)
+            figure.figures_sprites.draw(screen)"""
 
         self.load_buttons()
 
         # test
         # fallen_figure = self.figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
         #                                                                self.space, 100, 10, 75, 3)
-        # self.fallen_figures = [fallen_figure]
+        self.fallen_figures = []
 
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
