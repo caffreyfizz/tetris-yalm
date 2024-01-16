@@ -3,6 +3,7 @@ import pygame
 from settings_window import SettingsWindow
 from main_window import MainWindow
 from game_window import GameWindow
+from levels_window import LevelsWindow
 
 
 from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS
@@ -32,7 +33,7 @@ def main():
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
                 elif result[0] == 4:
-                    print("open_levels")
+                    window = LevelsWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
                 if result[1]:
                     mode = result[1]
