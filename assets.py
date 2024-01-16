@@ -10,6 +10,7 @@ RGB_COLORS = {"blue": (22, 128, 212, 100), "green": (0, 125, 104, 100), "yellow"
               "pink": (198, 23, 88, 100), "purple": (98, 5, 198, 100)}
 PPM = 10
 TIME_STEP = 1.0 / FPS
+COUNT_OF_LEVELS = 3
 
 
 def load_image(name, colorkey=None):

@@ -26,17 +26,22 @@ def main():
 
             result = window.events_processing(event)
             if result:
+                if result[1]:
+                    if result[2] == 1:
+                        mode = result[2]
+                    elif result[2] == 2:
+                        level = f"{result[2]}"
+
                 if result[0] == 1:
                     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif result[0] == 2:
+                    print(level)
                     window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode, screen, level)
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
                 elif result[0] == 4:
                     window = LevelsWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-                if result[1]:
-                    mode = result[1]
 
         window.render(screen)
         clock.tick(FPS)

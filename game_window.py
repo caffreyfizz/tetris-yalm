@@ -54,8 +54,8 @@ class GameWindow:
         self.load_buttons()
 
         # test
-        # fallen_figure = self.falling_figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
-        #                                                                        self.space, 100, 10, 30, 3)
+        fallen_figure = self.falling_figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
+                                                                               self.space, 100, 10, 30, 3)
         self.fallen_figures = []
 
     def load_buttons(self):
@@ -126,8 +126,6 @@ class GameWindow:
                 new_window = self.open_main()
             if event.key == pygame.K_UP:
                 self.figure.rotate()
-            if event.key == pygame.K_ESCAPE:
-                self.pause()
         if event.type == pygame.MOUSEBUTTONDOWN:
             result = self.buttons_check(event.pos)
             if result == "rotate":
