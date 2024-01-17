@@ -1,4 +1,4 @@
-4
+4;75
 Jshaped;yellow
 Ishaped;pink
 Oshaped;green

@@ -53,8 +53,8 @@ class GameWindow:
         self.load_buttons()
 
         # test
-        # fallen_figure = self.figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
-        #                                                                self.space, 100, 10, 75, 3)
+        fallen_figure = self.falling_figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
+                                                                               self.space, 100, 10, 30, 3)
         self.fallen_figures = []
 
     def load_buttons(self):
@@ -82,7 +82,7 @@ class GameWindow:
             data = [string for string in file.read().split("\n")][:-1]
 
         self.height, self.figure_piece_size = int(data[0].split(";")[0]), int(data[0].split(";")[1])
-        self.list_of_figures = [(string.split(";")[0], string.split(";")[1]) for string in data[2:]]
+        self.list_of_figures = [(string.split(";")[0], string.split(";")[1]) for string in data[1:]]
 
     def render(self, screen):
         screen.fill((0, 0, 0))
@@ -126,8 +126,6 @@ class GameWindow:
                 new_window = self.open_main()
             if event.key == pygame.K_UP:
                 self.figure.rotate()
-            if event.key == pygame.K_ESCAPE:
-                self.pause()
         if event.type == pygame.MOUSEBUTTONDOWN:
             result = self.buttons_check(event.pos)
             if result == "rotate":

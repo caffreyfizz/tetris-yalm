@@ -1,4 +1,4 @@
-3
+3;75
 Jshaped;yellow
 Oshaped;blue
 Jshaped;green

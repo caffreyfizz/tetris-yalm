@@ -85,6 +85,9 @@ class SettingsWindow:
         new_window = None
         new_mode = None
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:  # вернуться в меню
+                new_window = 1
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 new_window = self.check_buttons(event.pos)
@@ -101,7 +104,7 @@ class SettingsWindow:
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
 
-        return [new_window, new_mode]
+        return [new_window, 2, new_mode]
 
     def render(self, screen):
         screen.fill(self.background_color)

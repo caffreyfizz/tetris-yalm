@@ -1,6 +1,6 @@
 import pygame
 
-from assets import load_image
+from assets import load_image, COUNT_OF_LEVELS
 
 
 class LevelsWindow:
@@ -9,7 +9,7 @@ class LevelsWindow:
         self.background_color = (0, 17, 28)
         self.width, self.height = width, height
 
-        self.settings_window_sprites = pygame.sprite.Group()
+        self.levels_window_sprites = pygame.sprite.Group()
         self.cursor_pos = pygame.mouse.get_pos()
         self.cursor = load_image("cursor.png")
         self.sliding = False
@@ -17,30 +17,53 @@ class LevelsWindow:
         return_button_sprite = pygame.sprite.Sprite()
         return_button_sprite.image = load_image("return_button.png")
         return_button_sprite.rect = return_button_sprite.image.get_rect()
-        self.settings_window_sprites.add(return_button_sprite)
+        self.levels_window_sprites.add(return_button_sprite)
         return_button_sprite.rect.x = 10
         return_button_sprite.rect.y = 10
 
+        self.create_levels_buttons()
+
+    def create_levels_buttons(self):
+        x, y = 150, 100
+        for i in range(COUNT_OF_LEVELS):
+            lvl_button = pygame.sprite.Sprite()
+            lvl_button.image = load_image(f"levels/{i + 1}.png")
+            lvl_button.rect = lvl_button.image.get_rect()
+            self.levels_window_sprites.add(lvl_button)
+            lvl_button.rect.x = x
+            lvl_button.rect.y = y
+            y += 120
+
     def events_processing(self, event):
         new_window = None
-        new_mode = None
+        new_level = None
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:  # вернуться в меню
+                new_window = 1
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                new_window = self.check_buttons(event.pos)
+                if not new_window:
+                    new_window = 2
+                    new_level = self.check_levels(event.pos)
 
         if event.type == pygame.MOUSEMOTION:
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
 
-        return [new_window, new_mode]
+        return [new_window, 2, new_level]
 
     def render(self, screen):
         screen.fill(self.background_color)
         self.draw_stars(screen)
 
         # рендер всех спрайтов
-        self.settings_window_sprites.draw(screen)
+        self.levels_window_sprites.draw(screen)
 
         font = pygame.font.Font(None, 24)
-        text = font.render(f"выберите уровень сложности", 1, (255, 255, 255))
-        screen.blit(text, (180, 80))
+        text = font.render(f"выберите уровень", 1, (255, 255, 255))
+        screen.blit(text, (220, 60))
 
         if pygame.mouse.get_focused():
             screen.blit(self.cursor, self.cursor_pos)
@@ -68,10 +91,16 @@ class LevelsWindow:
                          stars[i][1], 2, 2))
 
     def check_buttons(self, mouse_position):
-        for i, sprite in enumerate(self.settings_window_sprites):
+        for i, sprite in enumerate(self.levels_window_sprites):
             if self.check_click(sprite.rect, mouse_position):
                 if i == 0:
                     return 1
+
+    def check_levels(self, mouse_position):
+        for i, sprite in enumerate(self.levels_window_sprites):
+            if self.check_click(sprite.rect, mouse_position):
+                if i > 0:
+                    return i
 
     def check_click(self, object_rect, mouse_position):
         x, y, width, height = object_rect.x, object_rect.y, object_rect.width, object_rect.height

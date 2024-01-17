@@ -3,6 +3,7 @@ import pygame
 from settings_window import SettingsWindow
 from main_window import MainWindow
 from game_window import GameWindow
+from levels_window import LevelsWindow
 
 
 from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS
@@ -12,10 +13,11 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     mode = 1
-    level = "test2"
+    level = "test3"
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
+    clock = pygame.time.Clock()
     running = True
     while running:
         for event in pygame.event.get():
@@ -24,6 +26,12 @@ def main():
 
             result = window.events_processing(event)
             if result:
+                if result[1]:
+                    if result[1] == 1:
+                        mode = result[2]
+                    elif result[1] == 2:
+                        level = f"{result[2]}"
+
                 if result[0] == 1:
                     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif result[0] == 2:
@@ -31,12 +39,10 @@ def main():
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
                 elif result[0] == 4:
-                    print("open_levels")
-
-                if result[1]:
-                    mode = result[1]
+                    window = LevelsWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         window.render(screen)
+        clock.tick(FPS)
         pygame.display.flip()
     pygame.quit()
 
