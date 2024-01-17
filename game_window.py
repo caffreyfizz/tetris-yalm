@@ -109,6 +109,7 @@ class GameWindow:
 
         for figure in self.fallen_figures:
             figure.render(screen)
+            print(figure.get_y_coord())
 
         self.space.Step(TIME_STEP, 10, 10)
 

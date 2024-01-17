@@ -1,3 +1,5 @@
 1;75
 Zshaped;blue
 Lshaped;green
+Oshaped;pink
+Ishaped;yellow

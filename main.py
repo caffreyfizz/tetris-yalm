@@ -6,14 +6,18 @@ from game_window import GameWindow
 from levels_window import LevelsWindow
 
 
-from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS
+from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS, COUNT_OF_LEVELS
 
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     mode = 1
-    level = "test3"
+
+    with open(f"data/results.txt") as file:
+        level = int(file.read()) + 1
+    if level > COUNT_OF_LEVELS:
+        level = COUNT_OF_LEVELS
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
