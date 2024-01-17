@@ -52,7 +52,7 @@ class LevelsWindow:
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
 
-        return [new_window, new_level, new_level]
+        return [new_window, 2, new_level]
 
     def render(self, screen):
         screen.fill(self.background_color)
