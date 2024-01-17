@@ -10,8 +10,8 @@ class Figure(pygame.sprite.Sprite):
         self.image = load_image(img_name)
 
         self.rect = self.image.get_rect()
-        self.rect.x = self.x = (335 - self.image.get_rect().width) // 2
-        self.rect.y = self.y = -100
+        self.rect.x = self.x = 100
+        self.rect.y = self.y = 100
 
         self.color = color
 
@@ -21,7 +21,7 @@ class Figure(pygame.sprite.Sprite):
     def render(self, screen):
         self.figures_sprites.draw(screen)
 
-    def move(self, speed, left_border, right_border):
+    def move(self, left_border, right_border):
         if pygame.key.get_pressed()[pygame.K_LEFT]:
             self.x -= 10
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
@@ -36,15 +36,11 @@ class Figure(pygame.sprite.Sprite):
         if self.check_collide(right_border):
             self.x = 335 - self.rect.width
 
-        if not self.next:
-            self.y += speed
-
         self.rect.x, self.rect.y = self.x, self.y
 
     def start(self):
-        self.next = False
-        self.rect.x = self.x = (335 - self.image.get_rect().width) // 2
-        self.rect.y = self.y = -100
+        self.rect.x = self.x = 100
+        self.rect.y = self.y = 100
 
     def check_collide(self, border):
         if pygame.sprite.spritecollideany(self, border):
@@ -61,8 +57,13 @@ class Figure(pygame.sprite.Sprite):
     def get_color(self):
         return self.color
     
-    def is_clicked(self):
-        pass
+    def is_clicked(self, coords, mouse_pos):
+        if coords[0] <= mouse_pos[0] <= coords[0] + self.image.get_rect().width and \
+        coords[1] <= mouse_pos[1] <= coords[1] + self.image.get_rect().height:
+            return self
+
+    def copy(self):
+        return self.__class__.__name__
 
 
 class Ishaped(Figure):

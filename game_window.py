@@ -20,6 +20,7 @@ class GameWindow:
         self.width, self.height = width, height
 
         self.figure_piece_size = 30
+        self.screen = screen
 
         #тут надо будет раскомментить когда добавишь файл с фигурами
         self.figures_types = {"Ishaped": Ishaped, "Jshaped": Jshaped, "Lshaped": Lshaped,
@@ -30,6 +31,9 @@ class GameWindow:
                                       "Oshaped": FallingOshaped, "Sshaped": FallingSshaped, "Tshaped": FallingTshaped,
                                       "Zshaped": FallingZshaped}
 
+        self.spawn_figure = None
+        self.count_of_rotate = 0
+        
         self.level = mode
 
         self.score = 0
@@ -42,13 +46,18 @@ class GameWindow:
         self.load_lvl(level)
 
         self.colors = ["blue", "green", "pink", "purple", "yellow"]
-        self.coords_for_buttons = [(380, 275), (465, 275), (535, 275), (380, 385), (465, 380), (535, 380)]
+        self.coords_for_buttons = [(370, 275), (445, 275), (530, 275), (370, 385), (445, 380), (530, 380)]
+        self.figures_and_coords = []
         self.figures_button = pygame.sprite.Group()
 
         for i in range(len(self.list_of_figures)):
-            figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1], self.figures_button)
+            figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1])
+            self.figures_and_coords.append((figure, self.coords_for_buttons[i]))
             figure.rect = figure.image.get_rect()
             figure.rect.x, figure.rect.y = self.coords_for_buttons[i]
+            scale_figure = pygame.transform.scale(figure.image, (figure.image.get_rect().width // 1.6, figure.image.get_rect().height // 1.6))
+            figure.image = scale_figure
+            self.figures_button.add(figure)
 
         self.load_buttons()
 
@@ -59,9 +68,9 @@ class GameWindow:
 
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
-        ButtonTurn(self.buttons)
-        ButtonReady(self.buttons)
-        ButtonClue(self.buttons)
+        self.rot_button = ButtonTurn(self.buttons)
+        self.ready_button = ButtonReady(self.buttons)
+        self.clue_button = ButtonClue(self.buttons)
 
     def box2d_init(self):
         self.space = world(gravity=(0, -10))
@@ -128,14 +137,24 @@ class GameWindow:
                 self.figure.rotate()
         if event.type == pygame.MOUSEBUTTONDOWN:
             result = self.buttons_check(event.pos)
-            if result == "rotate":
-                print("rotate")
-                # self.rot_button.rotate(self.figure)
-            if result == "ready":
-                print("ready")
+            if result == "rotate" and self.spawn_figure is not None:
+                self.rot_button.rotate(self.spawn_figure)
+                self.count_of_rotate += 1
+            if result == "ready" and self.spawn_figure is not None:
+                self.spawn_figure = None
+                self.count_of_rotate = 0
             if result == "clue":
                 print("clue")
-
+            for figure in self.figures_and_coords:
+                if figure[0].is_clicked(figure[1], event.pos):
+                    self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color)
+                    print(self.spawn_figure)
+                    self.spawn_figure.start()
+                    self.spawn_figure.render(self.screen)
+        if self.spawn_figure is not None and event.type == pygame.K_DOWN:
+            self.spawn_figure.move(self.left_border, self.right_border)
+            self.spawn_figure.render(self.screen)
+        
         return new_window
 
     def open_main(self):
