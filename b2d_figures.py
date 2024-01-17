@@ -45,8 +45,18 @@ class FallingFigure:
         for body, box in self.bodies:
             box.shape.draw(body, box, self.color, screen)
 
-    def get_color(self):
-        return self.color
+    def get_y_coord(self):
+        list_of_vertices = []
+        for body, box in self.bodies:
+            vertices = [(body.transform * v) * PPM for v in box.shape.vertices]
+            vertices = [(v[0], WINDOW_HEIGHT - v[1]) for v in vertices]
+            list_of_vertices.append(vertices)
+
+        y_coords = []
+        for figure_piece in list_of_vertices:
+            for x_y in figure_piece:
+                y_coords.append(x_y[1])
+        return max(y_coords)
 
 
 class FallingIshaped(FallingFigure):
