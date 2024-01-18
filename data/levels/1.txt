@@ -1,4 +1,4 @@
-3;75
-Jshaped;yellow
-Oshaped;blue
-Jshaped;green
+3;30
+Sshaped;yellow
+Zshaped;blue
+Tshaped;green

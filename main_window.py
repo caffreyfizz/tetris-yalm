@@ -1,6 +1,6 @@
 import pygame
 
-from assets import load_image
+from assets import load_image, COUNT_OF_LEVELS
 
 
 class MainWindow:
@@ -49,6 +49,11 @@ class MainWindow:
         self.cursor_pos = pygame.mouse.get_pos()
         self.cursor = load_image("cursor.png")
 
+        with open(f"data/results.txt") as file:
+            level = int(file.read()) + 1
+        if level > COUNT_OF_LEVELS:
+            level = COUNT_OF_LEVELS
+
     def render(self, screen):
         screen.fill(self.background_color)
         self.draw_stars(screen)
@@ -57,7 +62,7 @@ class MainWindow:
         self.main_window_sprites.draw(screen)
 
         font = pygame.font.Font(None, 24)
-        text = font.render(f"лучший рекорд: {self.score}", 1, (255, 255, 255))
+        text = font.render(f"текущий уровень: {self.score}", 1, (255, 255, 255))
         screen.blit(text, (20, 20))
 
         if pygame.mouse.get_focused():

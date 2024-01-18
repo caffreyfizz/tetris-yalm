@@ -62,11 +62,16 @@ class FallingFigure:
 class FallingIshaped(FallingFigure):
     def __init__(self, color, space, x, y, cell_width, count_rotates):
         self.count_rotates = count_rotates % 2
-        super().__init__(color, space, x, y, cell_width * 2)
+        super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = self.x / PPM + self.width / PPM * 2, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM * 2, self.width / PPM / 2
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM * 2, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM * 2, self.width / PPM / 2
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM * 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM * 2
+
         x2, y2 = -1, -1
         width2, height2 = -1, -1
         anchor_a, anchor_b = -1, -1
@@ -80,25 +85,70 @@ class FallingJshaped(FallingFigure):
         super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM / 2, self.width / PPM / 2
-        x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
-        width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
-        anchor_a, anchor_b = (0, -self.width / PPM / 2), (-self.width / PPM, self.width / PPM / 2)
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            anchor_a, anchor_b = (0, -self.width / PPM / 2), (-self.width / PPM, self.width / PPM / 2)
+
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM * 2.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 + self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (self.width / PPM / 2, 0), (-self.width / PPM / 2, -self.width / PPM)
+
+        elif self.count_rotates == 2:
+            x1, y1 = self.x / PPM + self.width / PPM * 2.5, (600 - self.y) / PPM - self.width / PPM * 1.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 - self.width / PPM, y1 + self.width / PPM
+            width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            anchor_a, anchor_b = (0, self.width / PPM / 2), (self.width / PPM, -self.width / PPM / 2)
+
+        elif self.count_rotates == 3:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 - self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (-self.width / PPM / 2, 0), (self.width / PPM / 2, self.width / PPM)
 
         super().box2d_init(x1, y1, width1, height1, x2, y2, width2, height2, anchor_a, anchor_b)
 
 
 class FallingLshaped(FallingFigure):
     def __init__(self, color, space, x, y, cell_width, count_rotates):
+        self.count_rotates = count_rotates % 4
         super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = self.x / PPM + self.width / PPM * 2.5, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM / 2, self.width / PPM / 2
-        x2, y2 = x1 - self.width / PPM, y1 - self.width / PPM
-        width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
-        anchor_a, anchor_b = (0, -self.width / PPM / 2), (self.width / PPM, self.width / PPM / 2)
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM * 2.5, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 - self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            anchor_a, anchor_b = (0, -self.width / PPM / 2), (self.width / PPM, self.width / PPM / 2)
+
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (self.width / PPM / 2, 0), (-self.width / PPM / 2, self.width / PPM)
+
+        elif self.count_rotates == 2:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM * 1.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 + self.width / PPM
+            width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            anchor_a, anchor_b = (0, self.width / PPM / 2), (-self.width / PPM, -self.width / PPM / 2)
+
+        elif self.count_rotates == 3:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM * 2.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 - self.width / PPM, y1 + self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (-self.width / PPM / 2, 0), (self.width / PPM / 2, -self.width / PPM)
 
         super().box2d_init(x1, y1, width1, height1, x2, y2, width2, height2, anchor_a, anchor_b)
 
@@ -119,46 +169,86 @@ class FallingOshaped(FallingFigure):
 
 class FallingSshaped(FallingFigure):
     def __init__(self, color, space, x, y, cell_width, count_rotates):
-        count_rotates = count_rotates % 4
+        self.count_rotates = count_rotates % 2
         super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = self.x / PPM + self.width / PPM, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM, self.width / PPM / 2
-        x2, y2 = x1 + self.width / PPM, y1 + self.width / PPM
-        width2, height2 = self.width / PPM, self.width / PPM / 2
-        anchor_a, anchor_b = ((-self.width / PPM / 2, -self.width / PPM / 2),
-                              (self.width / PPM / 2, self.width / PPM / 2))
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM, (600 - self.y) / PPM - self.width / PPM * 1.5
+            width1, height1 = self.width / PPM, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 + self.width / PPM
+            width2, height2 = self.width / PPM, self.width / PPM / 2
+            anchor_a, anchor_b = ((-self.width / PPM / 2, -self.width / PPM / 2),
+                                  (self.width / PPM / 2, self.width / PPM / 2))
+
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM
+            width1, height1 = self.width / PPM / 2, self.width / PPM
+            x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM
+            anchor_a, anchor_b = ((self.width / PPM / 2, -self.width / PPM / 2),
+                                  (-self.width / PPM / 2, self.width / PPM / 2))
 
         super().box2d_init(x1, y1, width1, height1, x2, y2, width2, height2, anchor_a, anchor_b)
 
 
 class FallingTshaped(FallingFigure):
     def __init__(self, color, space, x, y, cell_width, count_rotates):
-        count_rotates = count_rotates % 4
+        self.count_rotates = count_rotates % 4
         super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM / 2 * 3, self.width / PPM / 2
-        x2, y2 = x1, y1 - self.width / PPM
-        width2, height2 = self.width / PPM / 2, self.width / PPM / 2
-        anchor_a, anchor_b = (0, -self.width / PPM / 2), (0, self.width / PPM / 2)
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            x2, y2 = x1, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2
+            anchor_a, anchor_b = (0, -self.width / PPM / 2), (0, self.width / PPM / 2)
+
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM * 1.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 - self.width / PPM, y1
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (-self.width / PPM / 2, 0), (self.width / PPM / 2, 0)
+
+        elif self.count_rotates == 2:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2 * 3, self.width / PPM / 2
+            anchor_a, anchor_b = (0, -self.width / PPM / 2), (0, self.width / PPM / 2)
+
+        elif self.count_rotates == 3:
+            x1, y1 = self.x / PPM + self.width / PPM / 2, (600 - self.y) / PPM - self.width / PPM * 1.5
+            width1, height1 = self.width / PPM / 2, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1
+            width2, height2 = self.width / PPM / 2, self.width / PPM / 2 * 3
+            anchor_a, anchor_b = (self.width / PPM / 2, 0), (-self.width / PPM / 2, 0)
 
         super().box2d_init(x1, y1, width1, height1, x2, y2, width2, height2, anchor_a, anchor_b)
 
 
 class FallingZshaped(FallingFigure):
     def __init__(self, color, space, x, y, cell_width, count_rotates):
-        count_rotates = count_rotates % 4
+        self.count_rotates = count_rotates % 2
         super().__init__(color, space, x, y, cell_width)
 
     def box2d_init(self):
-        x1, y1 = self.x / PPM + self.width / PPM, (600 - self.y) / PPM - self.width / PPM / 2
-        width1, height1 = self.width / PPM, self.width / PPM / 2
-        x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
-        width2, height2 = self.width / PPM, self.width / PPM / 2
-        anchor_a, anchor_b = ((self.width / PPM / 2, -self.width / PPM / 2),
-                              (-self.width / PPM / 2, self.width / PPM / 2))
+        if self.count_rotates == 0:
+            x1, y1 = self.x / PPM + self.width / PPM, (600 - self.y) / PPM - self.width / PPM / 2
+            width1, height1 = self.width / PPM, self.width / PPM / 2
+            x2, y2 = x1 + self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM, self.width / PPM / 2
+            anchor_a, anchor_b = ((self.width / PPM / 2, -self.width / PPM / 2),
+                                  (-self.width / PPM / 2, self.width / PPM / 2))
+
+        elif self.count_rotates == 1:
+            x1, y1 = self.x / PPM + self.width / PPM * 1.5, (600 - self.y) / PPM - self.width / PPM
+            width1, height1 = self.width / PPM / 2, self.width / PPM
+            x2, y2 = x1 - self.width / PPM, y1 - self.width / PPM
+            width2, height2 = self.width / PPM / 2, self.width / PPM
+            anchor_a, anchor_b = ((-self.width / PPM / 2, -self.width / PPM / 2),
+                                  (self.width / PPM / 2, self.width / PPM / 2))
 
         super().box2d_init(x1, y1, width1, height1, x2, y2, width2, height2, anchor_a, anchor_b)

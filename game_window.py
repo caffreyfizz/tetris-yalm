@@ -39,27 +39,28 @@ class GameWindow:
         self.rows = 0
         self.start_time = time.time()
 
-        self.static_figures = pygame.sprite.Group()
-
         self.box2d_init()
         self.load_lvl(level)
 
         self.colors = ["blue", "green", "pink", "purple", "yellow"]
-        self.figures_button = pygame.sprite.Group()
-
         self.figures_init()
         self.load_buttons()
 
         self.fallen_figures = []
 
+        self.isgame = True
         self.clue = None
 
+
     def figures_init(self):
+        self.figures_button = pygame.sprite.Group()
         self.figures_and_coords = []
         self.coords_for_buttons = [(370, 275), (445, 275), (530, 275), (370, 385), (445, 380), (530, 380)]
 
+        figure_index = 0
+
         for i in range(len(self.list_of_figures)):
-            figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1])
+            figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1], figure_index)
             self.figures_and_coords.append((figure, self.coords_for_buttons[i]))
             figure.rect = figure.image.get_rect()
             figure.rect.x, figure.rect.y = self.coords_for_buttons[i]
@@ -67,6 +68,7 @@ class GameWindow:
                                                                  figure.image.get_rect().height // 1.6))
             figure.image = scale_figure
             self.figures_button.add(figure)
+            figure_index += 1
 
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
@@ -75,11 +77,14 @@ class GameWindow:
         self.clue_button = ButtonClue(self.buttons)
 
     def box2d_init(self):
-        self.space = world(gravity=(0, -10))
+        self.space = world(gravity=(0, -100))
 
         self.ground_body = self.space.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(30, 1)))
         self.left_body = self.space.CreateStaticBody(position=(30, 60), shapes=polygonShape(box=(1, 60)))
         self.right_body = self.space.CreateStaticBody(position=(0, 60), shapes=polygonShape(box=(1, 60)))
+
+        self.last_y = None
+        self.current_y = None
 
     def load_lvl(self, lvl):
         self.bottom_border = pygame.sprite.Group()
@@ -104,18 +109,19 @@ class GameWindow:
 
         self.text_render(screen)
 
-        self.static_figures.update()
-        self.static_figures.draw(screen)
-
         self.buttons.draw(screen)
         self.figures_button.draw(screen)
 
         if self.spawn_figure:
             self.spawn_figure.render(self.screen)
 
-        for figure in self.fallen_figures:
-            figure.render(screen)
-            print(figure.get_y_coord())
+        all_y = []
+        for fall_figure in self.fallen_figures:
+            fall_figure.render(screen)
+            all_y.append(fall_figure.get_y_coord())
+        self.last_y = self.current_y
+        if all_y:
+            self.current_y = max(all_y)
 
         self.space.Step(TIME_STEP, 10, 10)
 
@@ -146,39 +152,52 @@ class GameWindow:
         return new_window
 
     def game(self, event):
-        if event.type == pygame.KEYDOWN:
-            if self.spawn_figure and event.key == pygame.K_UP:
-                self.spawn_figure.rotate()
-            if self.spawn_figure and event.key == pygame.K_DOWN:
-                self.start_fall()
-                self.spawn_figure = None
-                self.count_of_rotate = 0
+        if self.isgame:
+            if event.type == pygame.KEYDOWN:
+                if self.spawn_figure and event.key == pygame.K_UP:
+                    self.spawn_figure.rotate()
+                    self.count_of_rotate += 1
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            result = self.buttons_check(event.pos)
+                if self.spawn_figure and event.key == pygame.K_DOWN:
+                    self.start_fall()
+                    self.delete_spawned()
 
-            if result == "rotate" and self.spawn_figure:
-                self.spawn_figure.rotate()
-                self.count_of_rotate += 1
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                result = self.buttons_check(event.pos)
 
-            if result == "ready" and self.spawn_figure:
-                self.start_fall()
-                self.spawn_figure = None
-                self.count_of_rotate = 0
+                if result == "rotate" and self.spawn_figure:
+                    self.spawn_figure.rotate()
+                    self.count_of_rotate += 1
 
-            if result == "clue":
-                print("clue")
+                if result == "ready" and self.spawn_figure:
+                    self.start_fall()
+                    self.delete_spawned()
+                    print(self.figures_and_coords, self.figures_button)
 
-            for figure in self.figures_and_coords:
-                if figure[0].is_clicked(figure[1], event.pos):
-                    self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color)
-                    print(self.spawn_figure)
-                    self.spawn_figure.start()
+                if result == "clue":
+                    print("clue")
 
-        if self.spawn_figure:
-            self.spawn_figure.move(self.left_border, self.right_border)
+                for figure in self.figures_and_coords:
+                    if figure[0].is_clicked(figure[1], event.pos):
+                        self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color, figure[0].get_index())
+                        print(self.spawn_figure)
+                        self.spawn_figure.start()
+
+            if self.spawn_figure:
+                self.spawn_figure.move(self.left_border, self.right_border)
+
+        if not bool(self.figures_button):
+            # здесь добавить таймер
+            self.isgame = False
+
+    def delete_spawned(self):
+        index = self.spawn_figure.get_index()
+        self.figures_and_coords[index][0].delete()
+        self.spawn_figure = None
+        self.count_of_rotate = 0
 
     def start_fall(self):
+        print(self.count_of_rotate)
         x, y = self.spawn_figure.get_coords()
         fallen_figure = (self.falling_figures_types[self.spawn_figure.get_type()]
                          (self.spawn_figure.get_color(), self.space, x, y, 30, self.count_of_rotate))
