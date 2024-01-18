@@ -30,7 +30,7 @@ class ButtonTurn(Button):
 class ButtonReady(Button):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.image = load_image("ready_button.png")
+        self.image = load_image("ready_button.png", colorkey=-1)
         self.name = "ready"
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 431, 525

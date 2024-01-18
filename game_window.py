@@ -15,14 +15,13 @@ vertical_borders = pygame.sprite.Group()
 
 
 class GameWindow:
+    # функции инициализаций
     def __init__(self, width, height, mode, screen, level):
         pygame.mouse.set_visible(True)
         self.width, self.height = width, height
-
         self.figure_piece_size = 30
         self.screen = screen
 
-        #тут надо будет раскомментить когда добавишь файл с фигурами
         self.figures_types = {"Ishaped": Ishaped, "Jshaped": Jshaped, "Lshaped": Lshaped,
                               "Oshaped": Oshaped, "Sshaped": Sshaped, "Tshaped": Tshaped,
                               "Zshaped": Zshaped}
@@ -46,25 +45,28 @@ class GameWindow:
         self.load_lvl(level)
 
         self.colors = ["blue", "green", "pink", "purple", "yellow"]
-        self.coords_for_buttons = [(370, 275), (445, 275), (530, 275), (370, 385), (445, 380), (530, 380)]
-        self.figures_and_coords = []
         self.figures_button = pygame.sprite.Group()
+
+        self.figures_init()
+        self.load_buttons()
+
+        self.fallen_figures = []
+
+        self.clue = None
+
+    def figures_init(self):
+        self.figures_and_coords = []
+        self.coords_for_buttons = [(370, 275), (445, 275), (530, 275), (370, 385), (445, 380), (530, 380)]
 
         for i in range(len(self.list_of_figures)):
             figure = self.figures_types[self.list_of_figures[i][0]](self.list_of_figures[i][1])
             self.figures_and_coords.append((figure, self.coords_for_buttons[i]))
             figure.rect = figure.image.get_rect()
             figure.rect.x, figure.rect.y = self.coords_for_buttons[i]
-            scale_figure = pygame.transform.scale(figure.image, (figure.image.get_rect().width // 1.6, figure.image.get_rect().height // 1.6))
+            scale_figure = pygame.transform.scale(figure.image, (figure.image.get_rect().width // 1.6,
+                                                                 figure.image.get_rect().height // 1.6))
             figure.image = scale_figure
             self.figures_button.add(figure)
-
-        self.load_buttons()
-
-        # test
-        fallen_figure = self.falling_figures_types[self.list_of_figures[0][0]](self.list_of_figures[0][1],
-                                                                               self.space, 100, 10, 30, 3)
-        self.fallen_figures = []
 
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
@@ -93,6 +95,7 @@ class GameWindow:
         self.height, self.figure_piece_size = int(data[0].split(";")[0]), int(data[0].split(";")[1])
         self.list_of_figures = [(string.split(";")[0], string.split(";")[1]) for string in data[1:]]
 
+    # функции игрового процесса
     def render(self, screen):
         screen.fill((0, 0, 0))
 
@@ -106,6 +109,9 @@ class GameWindow:
 
         self.buttons.draw(screen)
         self.figures_button.draw(screen)
+
+        if self.spawn_figure:
+            self.spawn_figure.render(self.screen)
 
         for figure in self.fallen_figures:
             figure.render(screen)
@@ -134,29 +140,49 @@ class GameWindow:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:   # вернуться в меню
                 new_window = self.open_main()
-            if event.key == pygame.K_UP:
-                self.figure.rotate()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            result = self.buttons_check(event.pos)
-            if result == "rotate" and self.spawn_figure is not None:
-                self.rot_button.rotate(self.spawn_figure)
-                self.count_of_rotate += 1
-            if result == "ready" and self.spawn_figure is not None:
+
+        self.game(event)
+        
+        return new_window
+
+    def game(self, event):
+        if event.type == pygame.KEYDOWN:
+            if self.spawn_figure and event.key == pygame.K_UP:
+                self.spawn_figure.rotate()
+            if self.spawn_figure and event.key == pygame.K_DOWN:
+                self.start_fall()
                 self.spawn_figure = None
                 self.count_of_rotate = 0
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            result = self.buttons_check(event.pos)
+
+            if result == "rotate" and self.spawn_figure:
+                self.spawn_figure.rotate()
+                self.count_of_rotate += 1
+
+            if result == "ready" and self.spawn_figure:
+                self.start_fall()
+                self.spawn_figure = None
+                self.count_of_rotate = 0
+
             if result == "clue":
                 print("clue")
+
             for figure in self.figures_and_coords:
                 if figure[0].is_clicked(figure[1], event.pos):
                     self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color)
                     print(self.spawn_figure)
                     self.spawn_figure.start()
-                    self.spawn_figure.render(self.screen)
-        if self.spawn_figure is not None and event.type == pygame.K_DOWN:
+
+        if self.spawn_figure:
             self.spawn_figure.move(self.left_border, self.right_border)
-            self.spawn_figure.render(self.screen)
-        
-        return new_window
+
+    def start_fall(self):
+        x, y = self.spawn_figure.get_coords()
+        fallen_figure = (self.falling_figures_types[self.spawn_figure.get_type()]
+                         (self.spawn_figure.get_color(), self.space, x, y, 30, self.count_of_rotate))
+        self.fallen_figures.append(fallen_figure)
 
     def open_main(self):
         return [1, None]
@@ -164,9 +190,6 @@ class GameWindow:
     def set_score(self, new_score):
         self.score = new_score
         self.rows += 1
-
-    def pause(self):
-        pass
 
 
 class Border(pygame.sprite.Sprite):

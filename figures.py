@@ -26,8 +26,6 @@ class Figure(pygame.sprite.Sprite):
             self.x -= 10
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             self.x += 10
-        if pygame.key.get_pressed()[pygame.K_DOWN]:
-            self.y += 10
 
         self.rect.x = self.x
 
@@ -39,8 +37,8 @@ class Figure(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.x, self.y
 
     def start(self):
-        self.rect.x = self.x = 100
-        self.rect.y = self.y = 100
+        self.rect.x = self.x = (335 - self.rect.width) / 2
+        self.rect.y = self.y = 50
 
     def check_collide(self, border):
         if pygame.sprite.spritecollideany(self, border):
@@ -65,37 +63,50 @@ class Figure(pygame.sprite.Sprite):
     def copy(self):
         return self.__class__.__name__
 
+    def get_type(self):
+        return self.type
+
+    def get_coords(self):
+        return self.rect.x, self.rect.y
+
 
 class Ishaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Ishaped"
         super().__init__(color, f"I_shape/I_{color}.png", *group)
 
 
 class Jshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Jshaped"
         super().__init__(color, f"J_shape/J_{color}.png", *group)
 
 
 class Lshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Lshaped"
         super().__init__(color, f"L_shape/L_{color}.png", *group)
 
 
 class Oshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Oshaped"
         super().__init__(color, f"O_shape/O_{color}.png", *group)
 
 
 class Sshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Sshaped"
         super().__init__(color, f"S_shape/S_{color}.png", *group)
 
 
 class Tshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Tshaped"
         super().__init__(color, f"T_shape/T_{color}.png", *group)
 
 
 class Zshaped(Figure):
     def __init__(self, color, *group):
+        self.type = "Zshaped"
         super().__init__(color, f"Z_shape/Z_{color}.png", *group)
