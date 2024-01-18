@@ -43,3 +43,12 @@ class ButtonClue(Button):
         self.name = "clue"
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 477, 525
+
+
+class ButtonRestart(Button):
+    def __init__(self, *groups):
+        super().__init__(*groups)
+        self.image = load_image("rotate_button.png")
+        self.name = "restart"
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 530, 175

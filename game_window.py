@@ -5,7 +5,7 @@ from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody
 from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshaped
 from b2d_figures import (FallingIshaped, FallingJshaped, FallingLshaped, FallingOshaped, FallingSshaped,
                          FallingTshaped, FallingZshaped)
-from buttons import ButtonClue, ButtonReady, ButtonTurn, Button
+from buttons import ButtonClue, ButtonReady, ButtonTurn, ButtonRestart, Button
 
 from assets import load_image, RGB_COLORS, PPM, TIME_STEP
 
@@ -75,13 +75,14 @@ class GameWindow:
         self.rot_button = ButtonTurn(self.buttons)
         self.ready_button = ButtonReady(self.buttons)
         self.clue_button = ButtonClue(self.buttons)
+        self.restart_button = ButtonRestart(self.buttons)
 
     def box2d_init(self):
         self.space = world(gravity=(0, -100))
 
-        self.ground_body = self.space.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(30, 1)))
-        self.left_body = self.space.CreateStaticBody(position=(30, 60), shapes=polygonShape(box=(1, 60)))
-        self.right_body = self.space.CreateStaticBody(position=(0, 60), shapes=polygonShape(box=(1, 60)))
+        self.ground_body = self.space.CreateStaticBody(position=(0, 17), shapes=polygonShape(box=(30, 1)))
+        self.left_body = self.space.CreateStaticBody(position=(25.4, 60), shapes=polygonShape(box=(1, 60)))
+        self.right_body = self.space.CreateStaticBody(position=(10.4, 60), shapes=polygonShape(box=(1, 60)))
 
         self.last_y = None
         self.current_y = None
@@ -148,9 +149,15 @@ class GameWindow:
             if event.key == pygame.K_BACKSPACE:   # вернуться в меню
                 new_window = self.open_main()
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            result = self.buttons_check(event.pos)
+
+            if result == "restart":
+                new_window = 2
+
         self.game(event)
         
-        return new_window
+        return [new_window, None]
 
     def game(self, event):
         if self.isgame:
@@ -162,6 +169,7 @@ class GameWindow:
                 if self.spawn_figure and event.key == pygame.K_DOWN:
                     self.start_fall()
                     self.delete_spawned()
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 result = self.buttons_check(event.pos)
