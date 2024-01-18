@@ -108,6 +108,7 @@ class GameWindow:
         screen.blit(background, (0, 0))
 
         self.text_render(screen)
+        screen.blit(load_image("pit.png"), (30, 0))
 
         self.buttons.draw(screen)
         self.figures_button.draw(screen)
