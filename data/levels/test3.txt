@@ -1,4 +1,4 @@
-1;75
+1;75;0:3,2:4,0:2,1:4
 Zshaped;blue
 Lshaped;green
 Oshaped;pink

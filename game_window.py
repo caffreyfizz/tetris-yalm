@@ -48,9 +48,11 @@ class GameWindow:
         self.fallen_figures = []
 
         self.isgame = True
-        self.clue = None
+        self.clue = False
         self.end_level_time = None
         self.game_result = None
+        self.end_time = None
+        self.clue_timer = None
 
 
     def figures_init(self):
@@ -101,8 +103,13 @@ class GameWindow:
 
         with open(f"data/levels/{lvl}.txt") as file:
             data = [string for string in file.read().split("\n")][:-1]
+        data_1 = data[0].split(";")
 
-        self.height, self.figure_piece_size = int(data[0].split(";")[0]), int(data[0].split(";")[1])
+        self.height, self.figure_piece_size = int(data_1[0]), int(data_1[1])
+
+        self.clues = [(int(coords.split(":")[0]) * self.figure_piece_size,
+                       int(coords.split(":")[1]) * self.figure_piece_size) for coords in data_1[2].split(",")]
+
         self.list_of_figures = [(string.split(";")[0], string.split(";")[1]) for string in data[1:]]
 
     # функции игрового процесса
@@ -121,6 +128,9 @@ class GameWindow:
 
         self.text_render(screen)
 
+        if self.clue and self.spawn_figure:
+            self.show_clue(screen)
+
         if self.isgame:
             self.buttons.draw(screen)
             self.figures_button.draw(screen)
@@ -133,10 +143,20 @@ class GameWindow:
 
             self.space.Step(TIME_STEP, 10, 10)
         else:
-            self.end_render()
+            self.end_render(screen)
 
-    def end_render(self):
-        pass
+    def end_render(self, screen):
+        font = pygame.font.Font(None, 50)
+        if self.game_result == "win":
+            text_1 = f"счёт: {self.score}"
+            text_2 = f"время: {self.end_time}"
+            pos1 = (30, 100)
+            pos2 = (30, 200)
+            text_score = font.render(text_1, 1, (255, 255, 255))
+            screen.blit(text_score, pos1)
+
+            text_time = font.render(text_2, 1, (255, 255, 255))
+            screen.blit(text_time, pos2)
 
     def buttons_check(self, mouse_position):
         for button in self.buttons:
@@ -162,6 +182,18 @@ class GameWindow:
 
         text_time = font.render(text_2, 1, (255, 255, 255))
         screen.blit(text_time, pos2)
+
+    def show_clue(self, screen):
+        if not self.clue_timer:
+            self.clue_timer = time.time()
+        if self.clue_timer:
+            if time.time() - self.clue_timer >= 2:
+                self.clue = False
+                self.clue_timer = None
+
+        coords = self.clues[self.spawn_figure.get_index()]
+        pygame.draw.line(screen, (255, 255, 0), (114 + coords[0], 440),
+                         (114 + coords[1], 440), 8)
 
     def events_processing(self, event):
         new_window = None
@@ -224,7 +256,8 @@ class GameWindow:
                     self.delete_spawned()
 
                 if result == "clue":
-                    print("clue")
+                    if self.spawn_figure:
+                        self.clue = True
 
                 for i, figure in enumerate(self.figures_and_coords):
                     if figure[0].is_clicked(figure[1], event.pos) and not self.figures_flags[i + 1]:
@@ -263,10 +296,10 @@ class GameWindow:
             current_y = min(all_y)
 
         if current_y:
-            print(current_y, 600 - (self.height * self.figure_piece_size + 180))
             if current_y > 600 - (self.height * self.figure_piece_size + 180):
                 self.game_result = "win"
                 self.change_results()
+                self.end_time = round(time.time() - self.start_time, 1)
             else:
                 self.game_result = "lose"
 
