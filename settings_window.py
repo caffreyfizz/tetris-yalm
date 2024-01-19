@@ -119,8 +119,17 @@ class SettingsWindow:
         text = font.render(f"громкость", 1, (255, 255, 255))
         screen.blit(text, (245, 80))
 
+        screen.blit(load_image("backspace.png"), (200, 300))
+        text = font.render(f"вернуться в меню", 1, (255, 255, 255))
+        screen.blit(text, (100, 300))
+
+        screen.blit(load_image("down.png"), (200, 360))
+        text = font.render(f"запустить фигуру", 1, (255, 255, 255))
+        screen.blit(text, (100, 360))
+
         if pygame.mouse.get_focused():
             screen.blit(self.cursor, self.cursor_pos)
+
 
     def draw_stars(self, screen):
         stars = [(575, 164), (139, 1), (541, 29), (101, 459), (24, 267), (545, 470), (183, 509),

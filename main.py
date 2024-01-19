@@ -16,8 +16,8 @@ def main():
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-    pygame.mixer.music.load('data/sounds/soundtrack.mp3')
-    pygame.mixer.music.play()
+    pygame.mixer.music.load('data/sounds/test.mp3')
+    pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
     clock = pygame.time.Clock()
