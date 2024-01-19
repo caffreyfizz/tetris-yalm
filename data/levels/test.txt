@@ -1,3 +1,5 @@
-1
-Oshaped;blue
-Oshaped;green
+1;30
+Oshaped;pink
+Sshaped;purple
+Tshaped;yellow
+Zshaped;blue

@@ -19,7 +19,7 @@ class GameWindow:
     def __init__(self, width, height, mode, screen, level):
         pygame.mouse.set_visible(True)
         self.width, self.height = width, height
-        self.figure_piece_size = 30
+        self.level = level
         self.screen = screen
 
         self.figures_types = {"Ishaped": Ishaped, "Jshaped": Jshaped, "Lshaped": Lshaped,
@@ -36,7 +36,6 @@ class GameWindow:
         self.level = mode
 
         self.score = 0
-        self.rows = 0
         self.start_time = time.time()
 
         self.box2d_init()
@@ -50,6 +49,8 @@ class GameWindow:
 
         self.isgame = True
         self.clue = None
+        self.end_level_time = None
+        self.game_result = None
 
 
     def figures_init(self):
@@ -80,20 +81,17 @@ class GameWindow:
     def box2d_init(self):
         self.space = world(gravity=(0, -100))
 
-        self.ground_body = self.space.CreateStaticBody(position=(0, 17), shapes=polygonShape(box=(30, 1)))
+        self.ground_body = self.space.CreateStaticBody(position=(0, 16), shapes=polygonShape(box=(30, 1)))
         self.left_body = self.space.CreateStaticBody(position=(25.4, 60), shapes=polygonShape(box=(1, 60)))
         self.right_body = self.space.CreateStaticBody(position=(10.4, 60), shapes=polygonShape(box=(1, 60)))
-
-        self.last_y = None
-        self.current_y = None
 
     def load_lvl(self, lvl):
         self.bottom_border = pygame.sprite.Group()
         self.left_border = pygame.sprite.Group()
         self.right_border = pygame.sprite.Group()
         Border(20, self.height - 1, self.width // 2 + 50, self.height, self.bottom_border)
-        Border(20, -100, 20, self.height - 1, self.left_border)
-        Border(self.width // 2 + 35, -100, self.width // 2 + 35, self.height, self.right_border)
+        Border(114, -100, 114, self.height - 1, self.left_border)
+        Border(244, -100, 244, self.height, self.right_border)
 
         with open(f"data/levels/{lvl}.txt") as file:
             data = [string for string in file.read().split("\n")][:-1]
@@ -103,29 +101,36 @@ class GameWindow:
 
     # функции игрового процесса
     def render(self, screen):
+        if self.spawn_figure:
+            self.spawn_figure.move(self.left_border, self.right_border)
+
+        self.check_end()
+
         screen.fill((0, 0, 0))
 
         background = load_image("interface.png")
         screen.blit(background, (0, 0))
 
-        self.text_render(screen)
         screen.blit(load_image("pit.png"), (30, 0))
 
-        self.buttons.draw(screen)
-        self.figures_button.draw(screen)
+        self.text_render(screen)
 
-        if self.spawn_figure:
-            self.spawn_figure.render(self.screen)
+        if self.isgame:
+            self.buttons.draw(screen)
+            self.figures_button.draw(screen)
 
-        all_y = []
-        for fall_figure in self.fallen_figures:
-            fall_figure.render(screen)
-            all_y.append(fall_figure.get_y_coord())
-        self.last_y = self.current_y
-        if all_y:
-            self.current_y = max(all_y)
+            if self.spawn_figure:
+                self.spawn_figure.render(self.screen)
 
-        self.space.Step(TIME_STEP, 10, 10)
+            for fall_figure in self.fallen_figures:
+                fall_figure.render(screen)
+
+            self.space.Step(TIME_STEP, 10, 10)
+        else:
+            self.end_render()
+
+    def end_render(self):
+        pass
 
     def buttons_check(self, mouse_position):
         for button in self.buttons:
@@ -136,11 +141,21 @@ class GameWindow:
     def text_render(self, screen):
         font = pygame.font.Font(None, 35)
 
-        text_score = font.render(f"{self.score}", 1, (255, 255, 255))
-        screen.blit(text_score, (503, 45))
+        if self.isgame:
+            text_1 = f"{self.score}"
+            text_2 = f"{time.time() - self.start_time:.1f}"
+            pos1 = (503, 45)
+            pos2 = (480, 80)
+        else:
+            text_1 = "you"
+            text_2 = self.game_result
+            pos1 = (490, 45)
+            pos2 = (490, 80)
+        text_score = font.render(text_1, 1, (255, 255, 255))
+        screen.blit(text_score, pos1)
 
-        text_time = font.render(f"{time.time() - self.start_time:.2f}", 1, (255, 255, 255))
-        screen.blit(text_time, (480, 80))
+        text_time = font.render(text_2, 1, (255, 255, 255))
+        screen.blit(text_time, pos2)
 
     def events_processing(self, event):
         new_window = None
@@ -149,15 +164,16 @@ class GameWindow:
             if event.key == pygame.K_BACKSPACE:   # вернуться в меню
                 new_window = self.open_main()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            result = self.buttons_check(event.pos)
+        if self.isgame:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                result = self.buttons_check(event.pos)
 
-            if result == "restart":
-                new_window = 2
+                if result == "restart":
+                    new_window = self.open_game()
 
-        self.game(event)
-        
-        return [new_window, None]
+            self.game(event)
+
+        return new_window
 
     def game(self, event):
         if self.isgame:
@@ -170,7 +186,6 @@ class GameWindow:
                     self.start_fall()
                     self.delete_spawned()
 
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 result = self.buttons_check(event.pos)
 
@@ -181,7 +196,6 @@ class GameWindow:
                 if result == "ready" and self.spawn_figure:
                     self.start_fall()
                     self.delete_spawned()
-                    print(self.figures_and_coords, self.figures_button)
 
                 if result == "clue":
                     print("clue")
@@ -189,15 +203,7 @@ class GameWindow:
                 for figure in self.figures_and_coords:
                     if figure[0].is_clicked(figure[1], event.pos):
                         self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color, figure[0].get_index())
-                        print(self.spawn_figure)
                         self.spawn_figure.start()
-
-            if self.spawn_figure:
-                self.spawn_figure.move(self.left_border, self.right_border)
-
-        if not bool(self.figures_button):
-            # здесь добавить таймер
-            self.isgame = False
 
     def delete_spawned(self):
         index = self.spawn_figure.get_index()
@@ -206,18 +212,47 @@ class GameWindow:
         self.count_of_rotate = 0
 
     def start_fall(self):
-        print(self.count_of_rotate)
         x, y = self.spawn_figure.get_coords()
         fallen_figure = (self.falling_figures_types[self.spawn_figure.get_type()]
                          (self.spawn_figure.get_color(), self.space, x, y, 30, self.count_of_rotate))
         self.fallen_figures.append(fallen_figure)
+        self.score += 1
+
+    def check_end(self):
+        if not bool(self.figures_button):
+            if not self.end_level_time:
+                self.end_level_time = time.time()
+
+        if self.isgame and self.end_level_time and int(time.time() - self.end_level_time) >= 3:
+            self.check_win()
+            self.isgame = False
+
+    def check_win(self):
+        current_y = None
+        all_y = []
+        for fall_figure in self.fallen_figures:
+            all_y.append(fall_figure.get_y_coord())
+        if all_y:
+            current_y = min(all_y)
+
+        if current_y:
+            print(current_y, 600 - (self.height * self.figure_piece_size + 180))
+            if current_y > 600 - (self.height * self.figure_piece_size + 180):
+                self.game_result = "win"
+                self.change_results()
+            else:
+                self.game_result = "lose"
+
+    def change_results(self):
+        with open(f"data/results.txt", "w") as file:
+            print(self.level)
+            file.write(f"{self.level}")
 
     def open_main(self):
         return [1, None]
 
-    def set_score(self, new_score):
-        self.score = new_score
-        self.rows += 1
+    def open_game(self):
+        return [2, None]
 
 
 class Border(pygame.sprite.Sprite):

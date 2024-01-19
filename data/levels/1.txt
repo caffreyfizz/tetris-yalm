@@ -1,4 +1,4 @@
-3;30
+4;30
 Sshaped;yellow
 Zshaped;blue
 Tshaped;green

@@ -56,7 +56,7 @@ class FallingFigure:
         for figure_piece in list_of_vertices:
             for x_y in figure_piece:
                 y_coords.append(x_y[1])
-        return max(y_coords)
+        return min(y_coords)
 
 
 class FallingIshaped(FallingFigure):

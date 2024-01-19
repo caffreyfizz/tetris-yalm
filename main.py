@@ -14,16 +14,16 @@ def main():
     screen = pygame.display.set_mode(WINDOW_SIZE)
     mode = 1
 
-    with open(f"data/results.txt") as file:
-        level = int(file.read()) + 1
-    if level > COUNT_OF_LEVELS:
-        level = COUNT_OF_LEVELS
-
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
 
     clock = pygame.time.Clock()
     running = True
     while running:
+        with open(f"data/results.txt") as file:
+            level = int(file.read()) + 1
+        if level > COUNT_OF_LEVELS:
+            level = COUNT_OF_LEVELS
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

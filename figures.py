@@ -25,16 +25,16 @@ class Figure(pygame.sprite.Sprite):
 
     def move(self, left_border, right_border):
         if pygame.key.get_pressed()[pygame.K_LEFT]:
-            self.x -= 10
+            self.x -= 3
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
-            self.x += 10
+            self.x += 3
 
         self.rect.x = self.x
 
         if self.check_collide(left_border):
-            self.x = 20
+            self.x = 114
         if self.check_collide(right_border):
-            self.x = 335 - self.rect.width
+            self.x = 244 - self.rect.width
 
         self.rect.x, self.rect.y = self.x, self.y
 
