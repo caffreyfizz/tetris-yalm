@@ -119,13 +119,47 @@ class SettingsWindow:
         text = font.render(f"громкость", 1, (255, 255, 255))
         screen.blit(text, (245, 80))
 
-        screen.blit(load_image("backspace.png"), (200, 300))
+        font = pygame.font.Font(None, 24)
+        screen.blit(load_image("keys/backspace.png"), (200, 300))
         text = font.render(f"вернуться в меню", 1, (255, 255, 255))
-        screen.blit(text, (100, 300))
+        screen.blit(text, (49, 315))
 
-        screen.blit(load_image("down.png"), (200, 360))
+        screen.blit(load_image("keys/down.png"), (200, 360))
         text = font.render(f"запустить фигуру", 1, (255, 255, 255))
-        screen.blit(text, (100, 360))
+        screen.blit(text, (48, 375))
+
+        screen.blit(load_image("keys/up.png"), (200, 420))
+        text = font.render(f"повернуть фигуру", 1, (255, 255, 255))
+        screen.blit(text, (45, 435))
+
+        screen.blit(load_image("keys/left.png"), (200, 480))
+        text = font.render(f"подвинуть фигуру", 1, (255, 255, 255))
+        screen.blit(text, (40, 485))
+        text = font.render(f"влево", 1, (255, 255, 255))
+        screen.blit(text, (143, 505))
+
+        screen.blit(load_image("keys/right.png"), (200, 540))
+        text = font.render(f"подвинуть фигуру", 1, (255, 255, 255))
+        screen.blit(text, (40, 545))
+        text = font.render(f"вправо", 1, (255, 255, 255))
+        screen.blit(text, (136, 565))
+
+        font = pygame.font.Font(None, 24)
+        screen.blit(load_image("keys/enter.png"), (460, 300))
+        text = font.render(f"начать игру", 1, (255, 255, 255))
+        screen.blit(text, (360, 315))
+
+        font = pygame.font.Font(None, 24)
+        screen.blit(load_image("keys/1.png"), (460, 430))
+        screen.blit(load_image("keys/2.png"), (510, 430))
+        screen.blit(load_image("keys/3.png"), (460, 490))
+        screen.blit(load_image("keys/4.png"), (510, 490))
+        text = font.render(f"выбрать фигуру", 1, (255, 255, 255))
+        screen.blit(text, (325, 440))
+        text = font.render(f"в соответствии", 1, (255, 255, 255))
+        screen.blit(text, (335, 470))
+        text = font.render(f"с номером", 1, (255, 255, 255))
+        screen.blit(text, (370, 500))
 
         if pygame.mouse.get_focused():
             screen.blit(self.cursor, self.cursor_pos)
