@@ -12,9 +12,13 @@ from assets import WINDOW_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS, COUNT_OF_LEVEL
 def main():
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
-    mode = 1
+    mode = 50
 
     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
+
+    pygame.mixer.music.load('data/sounds/soundtrack.mp3')
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.5)
 
     clock = pygame.time.Clock()
     running = True
@@ -32,7 +36,8 @@ def main():
             if result:
                 if result[1]:
                     if result[1] == 1:
-                        mode = result[2]
+                        if result[2]:
+                            mode = result[2]
                     elif result[1] == 2:
                         level = f"{result[2]}"
 

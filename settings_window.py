@@ -12,12 +12,7 @@ class Slider:
         self.width = 10
         self.height = 100
         self.mode = mode
-        if mode == 1:
-            self.x, self.y = self.start_x, self.start_y - 50
-        if mode == 2:
-            self.x, self.y = self.start_x + 145, self.start_y - 50
-        if mode == 3:
-            self.x, self.y = self.start_x + 290, self.start_y - 50
+        self.x, self.y = self.start_x + self.mode * 3, self.start_y - 50
 
     def check(self, mouse_x):
         if self.x <= mouse_x <= self.x + self.width:
@@ -32,20 +27,16 @@ class Slider:
         self.step_x = None
 
     def check_mode(self):
-        if self.x < self.start_x + 70:
-            self.mode = 1
-        if self.start_x + 70 <= self.x <= self.start_x + 230:
-            self.mode = 2
-        if self.start_x + 230 < self.x:
-            self.mode = 3
+        self.mode = round(self.x - self.start_x) // 3
+        pygame.mixer.music.set_volume(self.mode * 0.01)
 
     def move(self, mouse_x):
         if self.step_x:
             self.x = mouse_x - self.step_x
             if self.x < self.start_x:
                 self.x = self.start_x
-            if self.x > self.window_width - self.start_x - 10:
-                self.x = self.window_width - self.start_x - 10
+            if self.x > self.window_width - self.start_x:
+                self.x = self.window_width - self.start_x
             self.check_mode()
 
     def get_mode(self):
@@ -81,6 +72,8 @@ class SettingsWindow:
         return_button_sprite.rect.x = 10
         return_button_sprite.rect.y = 10
 
+        self.music_is_paused = False
+
     def events_processing(self, event):
         new_window = None
         new_mode = None
@@ -88,6 +81,13 @@ class SettingsWindow:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:  # вернуться в меню
                 new_window = 1
+            if event.key == pygame.K_SPACE:
+                if not self.music_is_paused:
+                    pygame.mixer.music.pause()
+                    self.music_is_paused = True
+                elif self.music_is_paused:
+                    pygame.mixer.music.unpause()
+                    self.music_is_paused = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 new_window = self.check_buttons(event.pos)
@@ -104,7 +104,7 @@ class SettingsWindow:
             if pygame.mouse.get_focused():
                 self.cursor_pos = event.pos
 
-        return [new_window, 2, new_mode]
+        return [new_window, 1, new_mode]
 
     def render(self, screen):
         screen.fill(self.background_color)
@@ -115,9 +115,9 @@ class SettingsWindow:
 
         self.slider.render(screen)
 
-        font = pygame.font.Font(None, 24)
-        text = font.render(f"выберите уровень сложности", 1, (255, 255, 255))
-        screen.blit(text, (180, 80))
+        font = pygame.font.Font(None, 35)
+        text = font.render(f"громкость", 1, (255, 255, 255))
+        screen.blit(text, (245, 80))
 
         if pygame.mouse.get_focused():
             screen.blit(self.cursor, self.cursor_pos)
