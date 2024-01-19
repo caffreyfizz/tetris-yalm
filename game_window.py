@@ -71,6 +71,12 @@ class GameWindow:
             self.figures_button.add(figure)
             figure_index += 1
 
+        fall_1 = False
+        fall_2 = False
+        fall_3 = False
+        fall_4 = False
+        self.figures_flags = {1: fall_1, 2: fall_2, 3: fall_3, 4: fall_4}
+
     def load_buttons(self):
         self.buttons = pygame.sprite.Group()
         self.rot_button = ButtonTurn(self.buttons)
@@ -186,6 +192,26 @@ class GameWindow:
                     self.start_fall()
                     self.delete_spawned()
 
+                if event.key == pygame.K_1 and not self.figures_flags[1]:
+                    fig = self.figures_and_coords[0]
+                    self.spawn_figure = self.figures_types[fig[0].copy()](fig[0].color, fig[0].get_index())
+                    self.spawn_figure.start()
+
+                if event.key == pygame.K_2 and not self.figures_flags[2]:
+                    fig = self.figures_and_coords[1]
+                    self.spawn_figure = self.figures_types[fig[0].copy()](fig[0].color, fig[0].get_index())
+                    self.spawn_figure.start()
+
+                if event.key == pygame.K_3 and not self.figures_flags[3]:
+                    fig = self.figures_and_coords[2]
+                    self.spawn_figure = self.figures_types[fig[0].copy()](fig[0].color, fig[0].get_index())
+                    self.spawn_figure.start()
+
+                if event.key == pygame.K_4 and not self.figures_flags[4]:
+                    fig = self.figures_and_coords[3]
+                    self.spawn_figure = self.figures_types[fig[0].copy()](fig[0].color, fig[0].get_index())
+                    self.spawn_figure.start()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 result = self.buttons_check(event.pos)
 
@@ -200,13 +226,14 @@ class GameWindow:
                 if result == "clue":
                     print("clue")
 
-                for figure in self.figures_and_coords:
-                    if figure[0].is_clicked(figure[1], event.pos):
+                for i, figure in enumerate(self.figures_and_coords):
+                    if figure[0].is_clicked(figure[1], event.pos) and not self.figures_flags[i + 1]:
                         self.spawn_figure = self.figures_types[figure[0].copy()](figure[0].color, figure[0].get_index())
                         self.spawn_figure.start()
 
     def delete_spawned(self):
         index = self.spawn_figure.get_index()
+        self.figures_flags[index + 1] = True
         self.figures_and_coords[index][0].delete()
         self.spawn_figure = None
         self.count_of_rotate = 0

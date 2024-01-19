@@ -50,9 +50,9 @@ class MainWindow:
         self.cursor = load_image("cursor.png")
 
         with open(f"data/results.txt") as file:
-            level = int(file.read()) + 1
-        if level > COUNT_OF_LEVELS:
-            level = COUNT_OF_LEVELS
+            self.level = int(file.read()) + 1
+        if self.level > COUNT_OF_LEVELS:
+            self.level = COUNT_OF_LEVELS
 
     def render(self, screen):
         screen.fill(self.background_color)
@@ -62,7 +62,7 @@ class MainWindow:
         self.main_window_sprites.draw(screen)
 
         font = pygame.font.Font(None, 24)
-        text = font.render(f"текущий уровень: {self.score}", 1, (255, 255, 255))
+        text = font.render(f"текущий уровень: {self.level}", 1, (255, 255, 255))
         screen.blit(text, (20, 20))
 
         if pygame.mouse.get_focused():
