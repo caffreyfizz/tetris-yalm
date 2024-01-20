@@ -123,7 +123,7 @@ class GameWindow:
         background = load_image("interface.png")
         screen.blit(background, (0, 0))
 
-        screen.blit(load_image("pit.png"), (30, 0))
+        screen.blit(load_image("pit.png"), (18, 0))
 
         self.text_render(screen)
 
