@@ -33,7 +33,7 @@ class GameWindow:
         self.spawn_figure = None
         self.count_of_rotate = 0
         
-        self.level = mode
+        self.level = level
 
         self.score = 0
         self.start_time = time.time()
@@ -152,11 +152,11 @@ class GameWindow:
             text_2 = f"время: {self.end_time}"
             pos1 = (30, 100)
             pos2 = (30, 200)
-            text_score = font.render(text_1, 1, (255, 255, 255))
-            screen.blit(text_score, pos1)
+        text_time = font.render(text_2, 1, (255, 255, 255))
+        screen.blit(text_time, pos2)
+        text_score = font.render(text_1, 1, (255, 255, 255))
+        screen.blit(text_score, pos1)
 
-            text_time = font.render(text_2, 1, (255, 255, 255))
-            screen.blit(text_time, pos2)
 
     def buttons_check(self, mouse_position):
         for button in self.buttons:
@@ -210,6 +210,11 @@ class GameWindow:
                     new_window = self.open_game()
 
             self.game(event)
+
+        if not self.isgame:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # вернуться в меню
+                    new_window = [2, None]
 
         return new_window
 
@@ -312,7 +317,7 @@ class GameWindow:
         return [1, None]
 
     def open_game(self):
-        return [2, None]
+        return [2, 2, self.level]
 
 
 class Border(pygame.sprite.Sprite):

@@ -27,6 +27,7 @@ def main():
             level = int(file.read()) + 1
         if level > COUNT_OF_LEVELS:
             level = COUNT_OF_LEVELS
+        print("main", level)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -40,10 +41,12 @@ def main():
                             mode = result[2]
                     elif result[1] == 2:
                         level = f"{result[2]}"
+                        print("KJHGKJHGKJHJKKKKKKKKKKK", level)
 
                 if result[0] == 1:
                     window = MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif result[0] == 2:
+                    print("\nchange", level, "lllllllllllllllllllllllllllllllllllllllllllllllllll\n")
                     window = GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode, screen, level)
                 elif result[0] == 3:
                     window = SettingsWindow(WINDOW_WIDTH, WINDOW_HEIGHT, mode)
