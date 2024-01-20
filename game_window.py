@@ -7,8 +7,7 @@ from b2d_figures import (FallingIshaped, FallingJshaped, FallingLshaped, Falling
                          FallingTshaped, FallingZshaped)
 from buttons import ButtonClue, ButtonReady, ButtonTurn, ButtonRestart, Button
 
-from assets import load_image, RGB_COLORS, PPM, TIME_STEP
-
+from assets import load_image, RGB_COLORS, PPM, TIME_STEP, COUNT_OF_LEVELS
 
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
@@ -152,10 +151,11 @@ class GameWindow:
             text_2 = f"время: {self.end_time}"
             pos1 = (30, 100)
             pos2 = (30, 200)
-        text_time = font.render(text_2, 1, (255, 255, 255))
-        screen.blit(text_time, pos2)
-        text_score = font.render(text_1, 1, (255, 255, 255))
-        screen.blit(text_score, pos1)
+            text_score = font.render(text_1, 1, (255, 255, 255))
+            screen.blit(text_score, pos1)
+
+            text_time = font.render(text_2, 1, (255, 255, 255))
+            screen.blit(text_time, pos2)
 
 
     def buttons_check(self, mouse_position):
@@ -213,8 +213,11 @@ class GameWindow:
 
         if not self.isgame:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # вернуться в меню
-                    new_window = [2, None]
+                if event.key == pygame.K_RETURN:
+                    if self.game_result == "win":
+                        new_window = [2, 2, str(min(int(self.level) + 1, COUNT_OF_LEVELS))]
+                    if self.game_result == "lose":
+                        new_window = [2, 2, self.level]
 
         return new_window
 
@@ -309,9 +312,10 @@ class GameWindow:
                 self.game_result = "lose"
 
     def change_results(self):
+        with open(f"data/results.txt", "r") as file:
+            res_lvl = int(file.read())
         with open(f"data/results.txt", "w") as file:
-            print(self.level)
-            file.write(f"{self.level}")
+            file.write(f"{max(int(self.level), res_lvl)}")
 
     def open_main(self):
         return [1, None]
