@@ -1,5 +1,7 @@
 import os
+import random
 import sys
+import time
 
 import pygame
 
@@ -29,3 +31,47 @@ def load_image(name, colorkey=None):
         image = image.convert_alpha()
 
     return image
+
+
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, draw_range):
+        super().__init__()
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+
+        self.draw_range = draw_range
+        self.image = self.frames[self.cur_frame]
+        self.rect.x, self.rect.y = (random.randint(self.draw_range[0], self.draw_range[2]),
+                                    random.randint(self.draw_range[1], self.draw_range[3]))
+        self.sprites = pygame.sprite.Group()
+        self.sprites.add(self)
+
+        self.start = time.time()
+        self.timer = random.random()
+        self.show = False
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(frame_location, self.rect.size)))
+
+    def update(self):
+        if not self.show and time.time() - self.start >= self.timer:
+            self.show = True
+
+        if self.show:
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            if self.cur_frame == len(self.frames) - 1:
+                self.rect.x, self.rect.y = (random.randint(self.draw_range[0], self.draw_range[2]),
+                                            random.randint(self.draw_range[1], self.draw_range[3]))
+                self.start = time.time()
+                self.timer = random.random()
+                self.show = False
+            self.image = self.frames[self.cur_frame]
+
+    def render(self, screen):
+        if self.show:
+            self.sprites.draw(screen)
