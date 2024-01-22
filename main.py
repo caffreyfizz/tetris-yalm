@@ -36,7 +36,7 @@ def main():
             if result:
                 if result[1]:
                     if result[1] == 1:
-                        if result[2]:
+                        if result[2] is not None:
                             mode = result[2]
                     elif result[1] == 2:
                         level = f"{result[2]}"
