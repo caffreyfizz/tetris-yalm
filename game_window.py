@@ -5,9 +5,9 @@ from Box2D.b2 import world, polygonShape, circleShape, staticBody, dynamicBody
 from figures import Ishaped, Jshaped, Lshaped, Oshaped, Sshaped, Tshaped, Zshaped
 from b2d_figures import (FallingIshaped, FallingJshaped, FallingLshaped, FallingOshaped, FallingSshaped,
                          FallingTshaped, FallingZshaped)
-from buttons import ButtonClue, ButtonReady, ButtonTurn, ButtonRestart, Button
+from buttons import ButtonClue, ButtonReady, ButtonTurn, ButtonRestart
 
-from assets import load_image, RGB_COLORS, PPM, TIME_STEP, COUNT_OF_LEVELS
+from assets import load_image, TIME_STEP, COUNT_OF_LEVELS, AnimatedSprite
 
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
@@ -146,16 +146,34 @@ class GameWindow:
 
     def end_render(self, screen):
         font = pygame.font.Font(None, 50)
+        font_2 = pygame.font.Font(None, 30)
+
         if self.game_result == "win":
+            for firework in self.fireworks:
+                firework.update()
+                firework.render(screen)
+
             text_1 = f"счёт: {self.score}"
             text_2 = f"время: {self.end_time}"
-            pos1 = (30, 100)
-            pos2 = (30, 200)
+            text_4 = "начать следующий уровень"
+            pos1 = (50, 50)
+            pos2 = (50, 100)
+            pos4 = (40, 250)
             text_score = font.render(text_1, 1, (255, 255, 255))
             screen.blit(text_score, pos1)
 
             text_time = font.render(text_2, 1, (255, 255, 255))
             screen.blit(text_time, pos2)
+        else:
+            text_4 = "начать заново"
+            pos4 = (40, 250)
+        text = font_2.render(text_4, 1, (255, 255, 255))
+        screen.blit(text, pos4)
+
+        text_3 = "Нажмите enter, чтобы"
+        pos3 = (40, 200)
+        text = font_2.render(text_3, 1, (255, 255, 255))
+        screen.blit(text, pos3)
 
 
     def buttons_check(self, mouse_position):
@@ -307,9 +325,20 @@ class GameWindow:
             if current_y > 600 - (self.height * self.figure_piece_size + 180):
                 self.game_result = "win"
                 self.change_results()
+                self.create_fireworks()
                 self.end_time = round(time.time() - self.start_time, 1)
             else:
                 self.game_result = "lose"
+
+    def create_fireworks(self):
+        self.fireworks = [AnimatedSprite(load_image("fireworks/yellow.png"), 6, 5,
+                                         (0, 0, 100, 100)),
+                          AnimatedSprite(load_image("fireworks/yellow.png"), 6, 5,
+                                         (0, 0, 100, 100)),
+                          AnimatedSprite(load_image("fireworks/yellow.png"), 6, 5,
+                                         (0, 0, 100, 100)),
+                          AnimatedSprite(load_image("fireworks/yellow.png"), 6, 5,
+                                         (0, 0, 100, 100))]
 
     def change_results(self):
         with open(f"data/results.txt", "r") as file:
